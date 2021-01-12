@@ -1,0 +1,304 @@
+{% extends 'header.html' %}
+
+{% block content %}
+    {#    <div class="container custom-container">#}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Profile
+            </div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center">Full name :</div>
+            <div class="p-2 flex-fill"><input type="text" class="ml-3 borderBottomEff" id="fullname"
+                                              placeholder="Name"></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center">Date of birthday :</div>
+            <div class="p-2 flex-fill"><input type="text" class="ml-3 borderBottomEff" id="dob"
+                                              placeholder="Name"></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center">Email@ :</div>
+            <div class="p-2 flex-fill"><input type="email" class="ml-3 borderBottomEff" id="email"
+                                              placeholder="email"></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center">Phone number :</div>
+            <div class="p-2 flex-fill"><input type="text" class="ml-3 borderBottomEff" id="phonenumber"
+                                              placeholder="Phone number"></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center">Telegram user name :</div>
+            <div class="p-2 flex-fill"><input type="text" class="ml-3 borderBottomEff" id="telegramusername"
+                                              placeholder="Telegram user name"></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center">Payment method :</div>
+            <div class="p-2 flex-fill"><input type="text" class="ml-3 borderBottomEff" id="question"
+                                              placeholder="Payment method" value="Paypal" disabled></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center">Balance :</div>
+            <div class="p-2 flex-fill"><input type="text" class="ml-3 borderBottomEff" id="balance"
+                                              placeholder="Balance" disabled></div>
+        </div>
+        <div class="row d-flex my-3">
+            <button class="btn btn-success shadow-lg" data-toggle="modal" data-target="#addfundsmodal"><span
+                    class="fa fa-dollar"></span> Add Funds to
+                Account
+            </button>
+        </div>
+        <div class="row d-flex justify-content-end my-3">
+            <button class="btn btn-outline-danger shadow-lg mt-2 mx-5" id="resetpassword" style="width: 10rem"
+                    data-toggle="modal" data-target="#resetpasswordmodal">Reset Password
+            </button>
+            <button class="btn btn-success mt-2 shadow-lg mx-5" id="save" style="width: 10rem">Save</button>
+
+        </div>
+    </div>
+    <div class="modal" id="resetpasswordmodal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title">Reset password</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <label for="oldpassword">Old password : </label>
+                    <input type="password" class="form-control" id="oldpassword" required>
+                    <label for="newpassword">New password : </label>
+                    <input type="password" class="form-control" id="newpassword" required>
+                    <label for="confirmpassword">Confirm password : </label>
+                    <input type="password" class="form-control" id="confirmpassword" required>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-success form-control" id="resetpasswordokbtn">Ok
+                    </button>
+                    <button type="button" class="btn btn-outline-danger form-control" data-dismiss="modal">Cancel
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="addfundsmodal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add funds to account</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div>
+                        <label for="email" style="width:50px; float:left;">Amount:</label>
+                        <input type="number" class="form-control" value="10" id="fundsamount" min="1"
+                               style="width:calc(100% - 130px);margin-top: -6px; margin-left: 20px; display: inline;">
+                        <label style="float:right; width: 50px;">AED</label>
+                    </div>
+                    <div class="fund-result" style="display: none;">
+                        <table>
+                            <tr>
+                                <td>total amount :</td>
+                                <td id="td_amount"></td>
+                            </tr>
+                            <tr>
+                                <td>Paypal transaction fee :</td>
+                                <td id="td_fee"></td>
+                            </tr>
+                            <tr>
+                                <td>funded amount :</td>
+                                <td id="td_funded"></td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer" style="display: block; text-align: center;">
+                    <div id="paypal_btn" style="width: 200px; margin: auto;"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+    <script>
+        var user_id = "{{user['user_id']}}";
+        var base_url = window.location.origin;
+        var CREATE_PAYMENT_URL = base_url + "/student/payment";
+        var EXECUTE_PAYMENT_URL = base_url + "/student/payment_execute";
+        var RETURN_URL = base_url + "/student/profile/" + user_id;
+        var CANCEL_URL = base_url + "/student/payment/" + user_id;
+        $(function () {
+            $("#fundsamount").change(function () {
+                checkAmount();
+                $(".fund-result").fadeOut();
+            })
+            $("#fundsamount").keyup(function () {
+                checkAmount();
+                $(".fund-result").fadeOut();
+            })
+
+            function checkAmount() {
+                amount = $('#fundsamount').val();
+                if (amount < 1) {
+                    $("#paypal_btn").fadeOut();
+                } else {
+                    $("#paypal_btn").fadeIn();
+                }
+            }
+
+            $("#paypal_btn iframe").attr('disabled', true);
+
+            paypal.Button.render({
+                style: {
+                    color: 'blue',
+                    size: 'responsive',
+                    label: 'paypal'
+                },
+                env: 'production',
+                commit: true,
+                payment: function () {
+                    var fund_amount = $("#fundsamount").val()
+                    if (fund_amount <= 0) {
+                        return;
+                    }
+                    return paypal.request.post(CREATE_PAYMENT_URL, {
+                        amount: fund_amount,
+                        return_url: RETURN_URL,
+                        cancel_url: CANCEL_URL
+                    }).then(function (data) {
+                        return data.paymentID;
+                    });
+                },
+                onAuthorize: function (data) {
+                    return paypal.request.post(EXECUTE_PAYMENT_URL, {
+                        paymentID: data.paymentID,
+                        payerID: data.payerID
+                    }).then(function (res) {
+                        console.log(res);
+                        if (res.success == true) {
+                            var funded_amount = res.funded_amount;
+                            var amount = res.amount;
+                            var fee = res.fee;
+                            temp = parseFloat($($("#balance_info")[0]).html());
+
+                            temp += parseFloat(funded_amount);
+                            $("#balance_info").html(temp)
+                            $("#td_amount").html(amount);
+                            $("#td_fee").html(fee);
+                            $("#td_funded").html(funded_amount);
+                            $(".fund-result").fadeIn();
+                        }
+                    });
+                },
+                onError: function (err) {
+                    //console.log(err);
+                    // Show an error page here, when an error occurs
+                }
+            }, '#paypal_btn')
+        })
+
+    </script>
+    <script>
+        var fullname = "{{ user['user_info']['First Name'] }}" + " " + "{{ user['user_info']['Last Name'] }}";
+        var DateOfBirth = "{{ user['user_info']['Date Of Birth'] }}";
+        var email = "{{ user['user_info']['email'] }}";
+        var balance = "{{ user['balance'] }}";
+        var phoneNumber = "{{ user['user_info']['Phone Number'] }}";
+        var telegramUserName = "{{ user['user_info']['Telegram'] }}";
+        ;
+
+        window.onload = function () {
+            $("#fullname").val(fullname);
+            $("#dob").val(DateOfBirth);
+            $("#email").val(email);
+            $("#phonenumber").val(phoneNumber);
+            $("#balance").val(balance);
+            $("#telegramusername").val(telegramUserName);
+        }
+        $("#save").click(function () {
+            fullName = $("#fullname").val();
+            fullName = fullName.split(" ");
+            firstname = fullName[0];
+            lastname = fullName[1];
+            console.log(user_id)
+            param = {
+                'user_id': user_id,
+                'First Name': firstname,
+                'Last Name': lastname,
+                'Date Of Birth': $("#dob").val(),
+                'email': $("#email").val(),
+                'Phone Number': $("#phonenumber").val(),
+                'Telegram': $("#telegramusername").val(),
+            };
+            $.ajax({
+                url: '/student/profile-save',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(param)},
+                success: function (res) { // display success response
+                    console.log(res);
+                    if (res['success'] == true) {
+                        alertSuccess("Profile update successed!")
+                    } else {
+                        alertError("Profile update failed");
+                    }
+                },
+                error: function () {
+                    alertError("Profile update failed");
+                }
+            });
+        });
+        $("#resetpasswordokbtn").click(function () {
+            
+            var oldpassword = $("#oldpassword").val();
+            var newpassword = $("#newpassword").val();
+            var confirmpassword = $("#confirmpassword").val();
+            
+            if (oldpassword == "" || newpassword == "" || confirmpassword == "") {
+                alertInfo("Please insert all fields!");
+                return;
+            }
+            if (newpassword != confirmpassword){
+                alertInfo("Password doesn't match!");
+                return;
+            }
+            $("#resetpasswordokbtn").append('<span style="width: 20px; height: 20px" class="spinner-border text-danger ml-1"  role="status">\n' +
+                        '</span>');
+            var param = {'job': 'student', 'user_id': user_id, 'data': [oldpassword, newpassword]}
+            $.ajax({
+                url: '/resetpassword',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(param)},
+                success: function (res) { // display success response
+                    if (res['success'] == true) {
+                        $("#resetpasswordmodal .close").click();
+                        emtpyPassword();
+                        alertSuccess("Reset password successed!")
+                    }else{
+                        alertInfo(res['msg']);
+                    }
+                    $("#resetpasswordokbtn").html('Ok');
+                },
+                error: function () {
+                    $("#resetpasswordokbtn").html('Ok');
+                    alertError("Operating failed!")
+                }
+            });
+        });
+        function emtpyPassword(){
+            $("#oldpassword").val('');
+            $("#newpassword").val('');
+            $("#confirmpassword").val('');
+        }
+    </script>
+{% endblock %}
+

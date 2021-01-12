@@ -1,0 +1,347 @@
+{% extends 'header.html' %}
+{% block content %}
+    <div class="container custom-container">
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Question
+            </div>
+        </div>
+        <div style="padding: 10px 20px 10px 50px;">
+            <p style="font-size: 2rem; font-family: 'cursive'">{{ question['question'] }}</p>
+        </div>
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Pictures
+            </div>
+        </div>
+        <div style="padding: 20px 20px 50px 20px;">
+            {% for item in question['images'] %}
+                <img class="question-image-body tomodal-img" src="/static/uploads/{{ item }}"
+                     alt="question image">
+            {% endfor %}
+        </div>
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Proposals
+            </div>
+        </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-6 d-flex justify-content-center align-items-center shadowBlue disp"
+                 style="height: 25rem; font-size: 2rem;" id="waitingWindow">
+                <span id="waitingContent">Waiting for teacher's proposal...</span>
+            </div>
+
+            <div class="mb-3 text-center my-auto" id="cardWindow">
+                <div class="card-group" id="card-group">
+                </div>
+            </div>
+        </div>
+        <div class="my-5 block-content d-flex justify-content-center" id="cancel_container">
+            <button class="btn btn-primary px-5" id="cancel_btn" onclick="cancel_question()">Cancel Question</button>
+        </div>
+    </div>
+    <div class="modal" id="teacherprofilemodal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">About teacher</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body d-flex justify-content-center">
+                    <div class="card w-100">
+                        <img class="mx-auto my-1" src="" id="modalavatar" alt="teacher image" width="80px" height="80px"
+                             style="border-radius: 50%">
+                        <div class="card-body">
+                            <hr class="my-0">
+                            <h5 class="card-title">Subject</h5>
+                            <p class="card-text" id="modalsubject"></p>
+                            <hr>
+                            <h5 class="card-title">Experience</h5>
+                            <p class="card-text" id="modalexperience"></p>
+                            <hr>
+                            <h5 class="card-title">Teaching Levels</h5>
+                            <p class="card-text" id="modalteachinglevels"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var question_id = "{{question['question_id']}}";
+        var accept_status = 0;    //0 sent question  1:accepted by teacher 2:created class 3:live  4:closed
+        var socket = io();
+        socket.on('connect', function () {
+            socket.emit('my event', {data: 'From js to server'});
+        });
+        socket.on('teacher_accept', function (data) {
+            q_id = data['question_id'];
+            if (q_id == question_id) {
+                console.log("teacher accepted to my question :" + q_id);
+                if (accept_status < 2) {
+                    loadProposal();
+                }
+            }
+        })
+        socket.on('timeover', function (data) {
+            remove_teacher(data)
+        })
+        socket.on('cancel_proposal', function (data) {
+            remove_teacher(data)
+        })
+        socket.on('cancel_question', function(data) {
+            if(question_id == data['question_id']){
+                console.log("cancel question received back")
+                window.location = "/student";
+            }
+        })
+        function cancel_question(){
+            $.confirm({
+                title: 'Question',
+                content: 'Are you sure cancel question?',
+                type: 'purple',
+                typeAnimated: true,
+                buttons: {
+                    ok: {
+                        text: 'Yes',
+                        btnClass: 'btn-purple px-5 mr-3',
+                        action: function(){
+                            sendCancelRequest();
+                        }
+                    },
+                    close: function () {
+                    }
+                }
+            });
+            
+        }
+        function sendCancelRequest(){
+            $.ajax({
+                url: '/student/question-cancel/' + question_id,
+                type: 'POST',
+                dataType: "json",
+                success: function (res) { // display success response
+                    if(res['success'] == true){
+                        console.log("cancel emited")
+                        socket.emit("cancel_question", {question_id: question_id})
+                    }
+                }
+            });
+        }
+        function remove_teacher(data) {
+            if (data['question_id'] == question_id) {
+                $("#" + data['teacher_id']).remove();
+                teacher_count = $("#selected ul").children().length;
+                if (teacher_count == 0) {
+                    loadProposal();
+                }
+            }
+        }
+
+        function emit_student_accept(param) {
+            socket.emit('student_accept', param);
+            console.log(" emited student_accept event");
+        }
+
+        function confirm() {
+            accept_status = 0;
+            loadProposal();
+        }
+
+        $(function () {
+            loadProposal();
+        })
+        loadProposal = function () {
+            $.ajax({
+                url: '/student/receive-proposal',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': question_id},
+                success: function (res) { // display success response
+                    if (res['success'] == true) {
+                        console.log(res)
+                        accept_status = res['status'];
+                        proposal = res['proposals'];
+                        if (accept_status == 2) {                 // 2: created class
+                            render(proposal, res['attendee_url']);
+                        } else {
+                            render(proposal, '');
+                        }
+                    }
+                }
+            });
+        }
+        render = function (proposals, u) {
+            
+            $("#cardWindow").addClass("disp");
+            if (accept_status < 2) {
+                $("#cancel_btn").show();
+                if (proposals.length == 0) {
+                    $("#waitingWindow").removeClass("disp");
+                    $("#waitingContent").html("Waiting for teacher's proposal...");
+                } else {
+                    $("#waitingWindow").addClass("disp");
+                    $("#cardWindow").removeClass("disp");
+                    createCardFunction(proposals)
+                }
+            } else if (accept_status == 2) {
+                $("#cancel_btn").hide();
+                $("#waitingWindow").removeClass("disp");
+                if (u == '') {
+                    $("#waitingContent").html('Creating class failed.');
+                    $("#waitingWindow").append('<div><button class="btn btn-primary">Confirm</button><div>');
+                } else {
+                    $("#waitingContent").html('<a class="btn btn-primary" target="_self" href="' + u + '">Go to class!</a>');
+                }
+            } else if (accept_status == 3) {
+                $("#cancel_btn").hide();
+                $("#waitingWindow").removeClass("disp");
+                $("#waitingContent").html('You are doing class now.');
+            } else {
+                $("#cancel_btn").hide();
+                $("#waitingWindow").removeClass("disp");
+                $("#waitingContent").html('Class is closed already.');
+            }
+        }
+        setStatus = function (id, status) {
+            if (status == 'accept') {
+                accept_status = 2;
+            }
+            item = $(this);
+            console.log("teacher_id:" + id + "  - status :" + status);
+            param = {'teacher_id': id, 'status': status, 'question_id': question_id};
+            $.ajax({
+                url: '/student/accept',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(param)},
+                success: function (res) { // display success response
+                    console.log(res);
+                    if (res['success'] == true) {
+                        if (status == 'accept') {
+                            u = res['attendee_url'];
+                            $("#cancel_btn").hide();
+                            $("#waitingContent").html('<a class="btn btn-primary" target="_self" href="' + u + '">Go to class!</a>');
+                        } else {
+                            $("#" + id).remove();
+                        }
+                        param['success'] = true;
+                        emit_student_accept(param);
+                    } else {
+                        if (status == 'accept') {
+                            $("#waitingContent").html('Creating class failed. <div class="classerror-msg">' + res['msg'] + '</div> <button class="btn btn-primary confirm-btn" onclick="confirm()">Confirm</button>');
+                            param['success'] = false;
+                            param['msg'] = res['msg'];
+                            emit_student_accept(param);
+                        }
+                    }
+                }
+            });
+        }
+        declineButtonClick = function (id) {
+            setStatus(id, 'decline');
+        }
+        acceptButtonClick = function (id) {
+            setStatus(id, 'accept');
+            $("#cardWindow").addClass("disp");
+            $("#waitingContent").html('<div class="spinner-border text-primary"  role="status">\n' +
+                '  <span class="sr-only">Loading...</span>\n' +
+                '</div>');
+            $("#waitingWindow").removeClass("disp");
+        }
+        visitProfile = function (id) {
+            $("#modalteachinglevels").empty()
+            $("#modalsubject").empty()
+
+            $("#modalavatar").attr("src","/static/photos/"+proposal[id]['photo']);
+            let subjects = proposal[id]['subject'];
+            $("#modalexperience").text(proposal[id]['experience']);
+            if (subjects.length > 0){
+                for (let i=0; i<subjects.length; i++){
+                    let subject = subjects[i];
+                    $("#modalsubject").append('<li>' +
+                        subject+
+                        '</li>')
+                }
+            }
+            let teachingLevels = proposal[id]['Teaching Levels'];
+            if (teachingLevels.length > 0){
+                for (let i=0; i<teachingLevels.length; i++){
+                    let teachingLevel = teachingLevels[i];
+                    $("#modalteachinglevels").append('<li>' +
+                        teachingLevel+
+                        '</li>')
+                }
+            }
+        }
+        createCardFunction = function (proposals) {
+            $("#card-group").empty();
+            for (let i = 0; i < proposals.length; i++) {
+                var teachername = proposals[i]['teacher_name'];
+                var price = proposals[i]['teacher_price'];
+                var teacher_rating = proposals[i]['teacher_rating'];
+                var photo = proposals[i]['photo'];
+                var rating = proposals[i]['teacher_rating'];
+                $("#card-group").append('<div id="' + proposals[i]['teacher_id'] + '" class="card mx-auto my-3 shadowBlue" style="min-width: 15rem; max-width: 15rem">' +
+                    '<div class="card-footer">' +
+                    '<div class="card-title">' +
+                    '<img src="/static/photos/' + photo + '" style="border-radius: 50%;" ' +
+                    'alt="question image" width="80" height="80">' +
+                    '</div>' +
+                    '<hr class = "m-0">' +
+                    '<h5 class="text-muted text-primary text-capitalize">' + teachername + '</h5>' +
+                    '</div>' +
+                    '<div class="card-body">' +
+                    '<h5>' + price + ' AED/hr</h5>' +
+                    '</div>' +
+                    '<hr class = "m-0">' +
+                    '<div class="rating card-body">' +
+                    '<div class="Stars" style="--rating: ' + rating + ';" aria-label="Rating of this product is 2.3 out of 5.">' +
+                    '</div>' +
+                    '</div>' +
+                    '<hr class = "m-0">' +
+
+                    '<button class="form-control btn btn-outline-info" data-toggle="modal" data-target="#teacherprofilemodal"' +
+                    'onclick="visitProfile(' +
+                    i +
+                    ')">' + 'Visit profile' + '</button>' +
+
+                    '<div class="card-footer d-inline py-1 px-0">' +
+                    '<button type="button" class="btn btn-primary mx-2" onclick="acceptButtonClick(\'' + proposals[i]['teacher_id'] + '\')">Accept</button>' +
+                    '<button type="button" class="btn btn-danger mx-2" onclick="declineButtonClick(\'' + proposals[i]['teacher_id'] + '\')">Decline</button>' +
+                    '</div>' +
+                    '</div>');
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --star-size: 32px;
+            --star-color: grey;
+            --star-background: red;
+        }
+
+        .rating {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .Stars {
+            --percent: calc(var(--rating) / 5.0 * 100%);
+            display: inline-block;
+            font-size: var(--star-size);
+            font-family: Times;
+            line-height: 1;
+        }
+
+        .Stars::before {
+            content: '★★★★★';
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, var(--star-background) var(--percent), var(--star-color) var(--percent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+{% endblock %}

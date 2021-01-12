@@ -1,0 +1,134 @@
+{% extends 'header.html' %}
+{% block content %}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mb-5">
+            <div class="question-header">
+                Teachers Statistic
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-lg-3 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-check fa-2x ml-3 text-primary"></span>
+                    <div class="card border-0">
+                        <span class="card-title my-0 mx-2 font-weight-bold text-secondary" style="font-size: 15px">Applied</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="totalapplied">0</span>
+                </div>
+            </div>
+            <div class="col-lg-3 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-ban fa-2x text-danger ml-3"> </span>
+                    <div class="card border-0">
+                        <span class="card-title my-0 mx-2 font-weight-bold text-secondary" style="font-size: 15px">Rejected</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="totalrejected">0</span>
+                </div>
+            </div>
+            <div class="col-lg-3 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-exclamation text-success fa-2x text-success ml-3"> </span>
+                    <div class="card border-0">
+                        <span class="card-title my-0 mx-2 font-weight-bold text-secondary" style="font-size: 15px">Accepted</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="totalaccepted">0</span>
+                </div>
+            </div>
+            <div class="col-lg-3 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-clock-o fa-2x text-warning ml-3"> </span>
+                    <div class="card border-0">
+                        <span class="card-title my-0 mx-2 font-weight-bold text-secondary" style="font-size: 15px">Pending</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="totalpendding">0</span>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                Teachers List
+            </div>
+        </div>
+        <div class="row my-5 d-flex justify-content-center">
+            <table class="table table-responsive-lg" id="teachertable">
+                <thead>
+                <tr>
+                    <th><span>Name</span></th>
+                    <th><span>Email</span></th>
+                    <th><span>Phone number</span></th>
+                    <th><span>Application</span></th>
+                    <th><span>Actions</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" class="text-muted" id="penddingteacherstable">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        displayData = {{ data|tojson }}
+        $(function () {
+                $("#totalapplied").text(displayData['applied_cnt']);
+                $("#totalrejected").text(displayData['rejected_cnt']);
+                $("#totalaccepted").text(displayData['accepted_cnt']);
+                $("#totalpendding").text(displayData['pending_cnt']);
+                renderTable();
+                $('#teachertable').DataTable();
+            })
+        renderTable = function () {
+            if (displayData['teacher_list'].length > 0) {
+                penddingTeachers = displayData['teacher_list'];
+                for (let i = 0; i < penddingTeachers.length; i++) {
+                    tr = '<tr><td>' +
+                        penddingTeachers[i]['full name'] +
+                        '</td>' +
+                        '<td>' +
+                        penddingTeachers[i]['email'] +
+                        '</td>' +
+                        '<td>' +
+                        penddingTeachers[i]['phone'] +
+                        '</td>' +
+                        '<td><a href="/admin/view-application/' + penddingTeachers[i]['teacher_id']  +'" class="text-decoration-none"><span>View Application </span>\n' +
+                        '<span class="fa fa-link font-weight-bold"></span></a></td>\n' +
+                        '<td style="font-size: 18px"><span class="btn fa fa-check text-success mr-3" onclick="acceptTeacher(' +
+                        i +
+                        ',true' +
+                        ')"></span><span\n' +
+                        'class="btn fa fa-ban text-danger" onclick="acceptTeacher(' +
+                        i +
+                        ',false)"></span></td></tr>';
+                    $("#penddingteacherstable").append(tr);
+                }
+            }
+        }
+        acceptTeacher = function (id, button_state) {
+            if (button_state){
+                param = {'teacher_id': penddingTeachers[id]['teacher_id'], 'approve': 'accept'};
+            }
+            else {param = {'teacher_id': penddingTeachers[id]['teacher_id'], 'approve': 'decline'};}
+            $.ajax({
+                url: '/admin/set-approve',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(param)},
+                success: function (res) { // display success response
+                    console.log(res);
+                    if (res['success'] == true) {
+                        penddingTeachers.splice(id,1);
+                        $("#penddingteacherstable").empty();
+                        renderTable()
+                    } else {
+                        alertError("Approve processing failed!");
+                    }
+                },
+                error:function () {
+                    alertError("Approve processing failed!");
+                }
+            });
+        }
+    </script>
+{% endblock %}

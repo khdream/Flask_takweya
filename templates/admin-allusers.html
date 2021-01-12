@@ -1,0 +1,137 @@
+{% extends 'header.html' %}
+{% block content %}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                Teachers List
+            </div>
+        </div>
+        <div class="row my-5 d-flex justify-content-center">
+            <table class="table table-responsive-lg" id="teacherlisttable">
+                <thead>
+                <tr>
+                    <th><span>Registration time</span></th>
+                    <th><span>Name</span></th>
+                    <th><span>Email</span></th>
+                    <th><span>Phone number</span></th>
+                    <th><span>Balance</span></th>
+                    <th><span>Profile</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" class="text-muted" id="teacherlist">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                Students List
+            </div>
+        </div>
+        <div class="row my-5 d-flex justify-content-center">
+            <table class="table table-responsive-lg" id="studentlisttable">
+                <thead>
+                <tr>
+                    <th><span>Registration time</span></th>
+                    <th><span>Name</span></th>
+                    <th><span>Email</span></th>
+                    <th><span>Phone number</span></th>
+                    <th><span>Balance</span></th>
+                    <th><span>Profile</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" class="text-muted" id="studentlist">
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    </div>
+    <style>
+        .has-search .form-control {
+            padding-left: 2.375rem;
+        }
+
+        .has-search .form-control-feedback {
+            position: absolute;
+            z-index: 2;
+            display: block;
+            width: 2.375rem;
+            height: 2.375rem;
+            line-height: 2.375rem;
+            text-align: center;
+            pointer-events: none;
+            color: #aaa;
+        }
+    </style>
+    <script>
+        $(function () {
+            displayData = {{ data | tojson }}
+            console.log(displayData)
+            renderTeacherTable()
+            $('#teacherlisttable').DataTable();
+            renderStudentTable()
+            $('#studentlisttable').DataTable();
+
+        })
+
+        renderTeacherTable = function () {
+            teachers = displayData['Teachers'];
+            if (teachers.length > 0) {
+                for (let i=0;i<teachers.length;i++) {
+                    teacher = teachers[i]
+                    $('#teacherlist').append(
+                        '<tr>' +
+                        '<td>' +
+                        teacher['registration_time'] +
+                        '</td>' +
+                        '<td><a href="/admin/teacher-info/' +
+                        teacher['teacher_id'] +
+                        '" class="text-decoration-none">' +
+                        teacher['Name'] +
+                        '</a>' +
+                        '</td>\n<td>' +
+                        teacher['email'] +
+                        '</td><td>' +
+                        teacher['phone'] +
+                        '</td><td>AED ' +
+                        teacher['Balance'] +
+                        '</td><td><a href="/admin/teacher-profile/' +
+                        teacher['teacher_id'] +
+                        '" class="text-decoration-none"><span class="fa fa-link font-weight-bold"></span></a></td></tr>'
+                    );
+                }
+            }
+
+        }
+        renderStudentTable = function () {
+            students = displayData['Students'];
+            if (students.length > 0) {
+                for (let i=0;i<students.length;i++) {
+                    student = students[i]
+                    $('#studentlist').append(
+                        '<tr>' +
+                        '<td>'+
+                        student['registration_time'] +
+                        '</td>' +
+                        '<td><a href="/admin/student-info/' +
+                        student['student_id'] +
+                        '" class="text-decoration-none">' +
+                        student['Name'] +
+                        '</a>' +
+                        '</td>\n<td>' +
+                        student['email'] +
+                        '</td><td>' +
+                        student['phone'] +
+                        '</td><td>AED ' +
+                        student['Balance'] +
+                        '</td><td><a href="/admin/student-profile/' +
+                        student['student_id'] +
+                        '" class="text-decoration-none"><span class="fa fa-link font-weight-bold"></span></a></td></tr>'
+                    );
+                }
+            }
+        }
+    </script>
+{% endblock %}

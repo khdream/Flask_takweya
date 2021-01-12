@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html  >
+<head>
+  
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='assets/images/logo.svg') }}" type="image/x-icon">
+  <meta name="description" content="Sign Up for live online tutoring here!">
+  
+  
+  <title>Student Sign Up</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap-grid.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap-reboot.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/tether/tether.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/datepicker/jquery.datetimepicker.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/dropdown/css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/formstyler/jquery.formstyler.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/formstyler/jquery.formstyler.theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/theme/css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/recaptcha.css') }}">
+  <link rel="preload" as="style" href="{{ url_for('static', filename='assets/mobirise/css/mbr-additional.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/mobirise/css/mbr-additional.css') }}" type="text/css">
+  
+  
+  
+</head>
+<body>
+  <section class="menu cid-rCl2DnHHyF" once="menu" id="menu1-q">
+
+    
+
+   <nav class="navbar navbar-expand beta-menu navbar-dropdown align-items-center navbar-fixed-top navbar-toggleable-sm bg-color transparent">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+        <div class="menu-logo">
+            <div class="navbar-brand">
+                <span class="navbar-logo">
+                    <a href="{{ url_for('home') }}">
+                         <img src="{{ url_for('static', filename='assets/images/logo.svg') }}" alt="Takweya Logo" title="" style="height: 3.8rem;">
+                    </a>
+                </span>
+
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true"><li class="nav-item">
+                    <a class="nav-link link text-black display-4" href="{{ url_for('homear') }}">
+                        عربي</a>
+                </li><li class="nav-item"><a class="nav-link link text-black display-4" href="{{ url_for('home') }}">
+                        Home&nbsp;</a></li>
+                <li class="nav-item">
+                    <a class="nav-link link text-black display-4" href="{{ url_for('aboutus') }}">
+                        About Us&nbsp;</a>
+                </li><li class="nav-item"><a class="nav-link link text-black display-4" href="{{ url_for('contactus') }}">
+                        Contact Us</a></li><li class="nav-item"><a class="nav-link link text-black display-4" href="{{ url_for('faq') }}">F.A.Q.</a></li><li class="nav-item"><a class="nav-link link text-black display-4" href="{{ url_for('teacher_dashboard') }}">
+                        Teach With Us&nbsp;</a></li></ul>
+            <div class="navbar-buttons mbr-section-btn"><a class="btn btn-sm btn-primary-outline display-4" href="{{ url_for('login') }}">Log In</a> <a class="btn btn-sm btn-primary display-4" href="{{ url_for('signup') }}">Sign Up</a></div>
+        </div>
+    </nav>
+</section>
+
+<section class="mbr-section extForm cid-rTMIax6QSk" id="extForm2-r">
+
+    
+
+    
+   <div class="container">
+        <div class="media-container-row">
+            <div class="col-md-6 col-lg-6 block-content">
+                <div class="form-block">
+                    <div class="bg"></div>
+                    <div class="form-wrap" data-form-type="formoid">
+<!--Formbuilder Form-->
+<form action="{{ url_for('signupstudent') }}" id="form_signup" method="POST" class="mbr-form form-with-styler" data-form-title="Student Sign Up">
+<div class="form-row">
+<div hidden="hidden" data-form-alert="" class="alert alert-success col-12">Thanks for filling out the form!</div>
+<div hidden="hidden" data-form-alert-danger="" class="alert alert-danger col-12">
+</div>
+</div>
+<div class="dragArea form-row">
+<div class="col-md-12">
+<h4 class="mbr-fonts-style mb-4 mbr-fonts-style display-5">Ready to start learning?</h4>
+</div>
+<div class="col-lg-6 col-md-12 col-sm-12 form-group " data-for="First Name">
+<label for="First Name-extForm2-r" class="form-control-label mbr-fonts-style display-7">First Name</label>
+<input type="text" name="First Name" placeholder="Your Name" data-form-field="Name" required="required" class="form-control input display-7" value="" id="First Name-extForm2-r">
+</div>
+<div data-for="Last Name" class="col-lg-6 col-md-12 col-sm-12 form-group">
+<label for="Last Name-extForm2-r" class="form-control-label mbr-fonts-style display-7">Last Name</label>
+<input type="text" name="Last Name" placeholder="Last Name" data-form-field="Last Name" class="form-control display-7" required="required" value="" id="Last Name-extForm2-r">
+</div>
+<div data-for="email" class="col-md-12 form-group ">
+<label for="email-extForm2-r" class="form-control-label mbr-fonts-style display-7">Email</label>
+<input type="text" name="email" placeholder="Email" data-form-field="Email" class="form-control input display-7" required="required" value="" id="email-extForm2-r">
+</div>
+<div data-for="password" class="col-lg-12 col-md-12 col-sm-12 form-group">
+<label for="password-extForm2-r" class="form-control-label mbr-fonts-style display-7">Password</label>
+<input type="password" name="password" placeholder="Password" data-form-field="password" class="form-control display-7" required="required" value="" id="password-extForm2-r">
+</div>
+
+<div data-for="Phone Number" class="col-lg-6 col-md-12 col-sm-12 form-group">
+<label for="phone_number" class="form-control-label mbr-fonts-style display-7">Phone Number</label>
+<input type="text" name="Phone Number" placeholder="Phone Number"  id="phone_number"  data-form-field="Phone Number" required="required" class="form-control display-7" value="">
+</div>
+<div class="col-lg-6 col-md-12 col-sm-12 form-group" data-for="Date Of Birth">
+<label for="Date Of Birth-extForm2-r" class="form-control-label mbr-fonts-style display-7">Date Of Birth</label>
+<input type="date" name="Date Of Birth" data-form-field="Date Of Birth" required="required" class="form-control display-7" value="" id="Date Of Birth-extForm2-r">
+</div>
+<!-- <div id="phone_msg" style="color: red; display:none;"></div> -->
+<div class="alert py-2" id="phone_msg" style="display:none; background-color: #ff2a2a4d; border-radius: 10px;">
+    <strong>Note! </strong> Please enter valid phone with country code.<br> For example: +971 555555555
+  </div>
+<div data-for="I am at least 13 years old" class="col-lg-12 col-md-12 col-sm-12 form-group">
+<div class="form-control-label">
+</div>
+<div class="form-check">
+<input type="checkbox" value="Yes" name="I accept the terms and conditions" data-form-field="Third" required="required" class="form-check-input display-7" id="I accept the terms and conditions-extForm2-r">
+<label class="form-check-label display-7">I accept the terms and conditions</label>
+</div>
+<div class="form-check">
+<input type="checkbox" value="Yes" name="I am at least 13 years old" data-form-field="Third" required="required" class="form-check-input display-7" id="I am at least 13 years old-extForm2-r">
+<label class="form-check-label display-7">I am at least 13 years old</label>
+</div>
+</div>
+<div class="col-md-12 input-group-btn mt-2">
+<button type="submit" class="btn btn-primary btn-form btn-bgr display-4">SIGN UP</button>
+</div>
+</div>
+</form><!--Formbuilder Form-->
+</div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6">
+                <div class="text-block">
+                    <h2 class="mb-4 mbr-fonts-style mbr-section-title display-2">Find The <strong>Best Tutors!</strong></h2>
+                    <h3 class="mbr-section-subtitle mbr-fonts-style mb-4 display-5">
+                        Whatever types of questions you'll have, our tutors will be there for you 24/7</h3>
+                    
+                    
+                </div>
+                <p class="mb-4 mbr-fonts-style subtext display-7 pt-5">*We dont share your personal info with anyone.&nbsp;</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+  <script src="{{ url_for('static', filename='assets/web/assets/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/popper/popper.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/tether/tether.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/datepicker/jquery.datetimepicker.full.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/smoothscroll/smooth-scroll.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/dropdown/js/nav-dropdown.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/dropdown/js/navbar-dropdown.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/touchswipe/jquery.touch-swipe.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/formstyler/jquery.formstyler.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/formstyler/jquery.formstyler.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/theme/js/script.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/formoid.min.js') }}"></script>
+  
+  <script>
+    var bcheck = 0;
+  $(function(){
+      $("#phone_number").change(function(){
+          $("#phone_msg").fadeOut();
+      })
+      $( "#form_signup" ).submit(function( event ) {
+          if(bcheck == 0){
+              event.preventDefault();
+              param = {'Phone Number': $("#phone_number").val()}
+              $.ajax({
+                  url: '/api/phone_check',
+                  type: 'POST',
+                  dataType: "json",
+                  data: {'data': JSON.stringify(param)},
+                  success: function (res) { // display success response
+                      console.log(res);
+                      if (res['success'] == true) {
+                          bcheck = 1;
+                          $( "#form_signup" ).submit();
+                      } else {
+                          bcheck = 0;
+                          //$("#phone_msg").html(res['msg']);
+                          $("#phone_msg").fadeIn();
+                      }
+                  }
+              });
+          }
+      });
+  })
+</script>
+ <div id="scrollToTop" class="scrollToTop mbr-arrow-up"><a style="text-align: center;"><i class="mbr-arrow-up-icon mbr-arrow-up-icon-cm cm-icon cm-icon-smallarrow-up"></i></a></div>
+  </body>
+</html>

@@ -1,0 +1,202 @@
+{% extends 'header.html' %}
+{% block content %}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="pl-1 mb-5">
+            <div class="question-header mb-4">Teachers Profile</div>
+            <h5 class="pl-5">Name : <span class="ml-3" id="teachername">{teacher name}</span></h5>
+            <h5 class="pl-5 mt-4">Email : <span class="ml-3" id="teacheremail">{teacher email}</span></h5>
+            <h5 class="pl-5 mt-4">Phone number : <span class="ml-3" id="teacherphone">{teacher phone}</span></h5>
+        </div>
+        <div class="pl-1 mb-5">
+            <div class="pl-1 mb-5">
+                <div class="question-header mb-4">Sessions</div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <table class="table table-hover" id="previoussessions">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Session</th>
+                        <th>Student</th>
+                        <th>Duration</th>
+                        <th>Paid Amount</th>
+                        <th>Rating</th>
+                    </tr>
+                    </thead>
+                    <tbody style="font-weight: 500;" class="text-muted" id="previoussessionhistory">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pl-1 mb-5">
+            <div class="question-header mb-4">Account</div>
+            <h5 class="pl-5">Total sessions : <span class="ml-3" id="teachertotalsession">{total sessions}</span>
+            </h5>
+            <h5 class="pl-5 mt-4">Current Balance in AED : <span class="ml-3"
+                                                                 id="teachercurbalance">{current balance}</span>
+            </h5>
+            <h5 class="pl-5 mt-4">Total earned in AED : <span class="ml-3"
+                                                              id="teachertotalearned">{total earned}</span>
+            </h5>
+            <div class="pl-1 mb-5">
+                <div class="row pl-3 pt-3">
+                    <div><h5 class="mt-4 pl-5">Add Balance : </h5></div>
+                    <div class="pt-3 px-4"><input type="number" id="addbalanceamount" class="form-control">
+                    </div>
+                    <div class="pt-3 px-4">
+                        <button class="btn btn-success" onclick='fnAddBalance()'>Add Balance
+                        </button>
+                    </div>
+                </div>
+                <div class="row pl-3 pt-3">
+                    <div><h5 class="mt-4 pl-5">Remove Balance : </h5></div>
+                    <div class="pt-3 px-4"><input type="number" class="form-control" id="removebalanceamount">
+                    </div>
+                    <div class="pt-3 px-4">
+                        <button class="btn btn-danger form-control" onclick='fnRemoveBalance()'>
+                            Remove Balance
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pl-1 mb-5">
+            <div class="question-header mb-4">Payment Details</div>
+            <div class="mt-5">
+                <h5 class="pl-5">Paypal email : <span class="ml-3" id="paypalemail">{paypal email}</span></h5>
+                <h5 class="pl-5 mt-4">Bank details : </h5>
+            </div>
+            <div class="pl-5 pt-3">
+                <div class="row py-2"><span class="pl-5 mr-2">Reciepiet Name : </span><u><span id="reciepietname">{Reciepiet Name}</span></u>
+                </div>
+                <div class="row py-2"><span class="pl-5 mr-2">Bank Name : </span><u><span
+                        id="bankname">{Bank Name}</span></u></div>
+                <div class="row py-2"><span class="pl-5 mr-2">Routing Number : </span><u><span id="routingnumber">{Routing Number}</span></u>
+                </div>
+                <div class="row py-2"><span class="pl-5 mr-2">Accounting Number : </span><u><span id="accountingnumber">{Accounting Number}</span></u>
+                </div>
+                <div class="row py-2"><span class="pl-5 mr-2">IBAN : </span><u><span id="iban">{IBAN}</span></u></div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-danger w-25 font-weight-bolder" onclick='fnRemoveUser()'>Remove User
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        displayData = {{ info |tojson }}
+            console.log(displayData);
+        $(function () {
+            renderTable();
+            $("#previoussessions").DataTable()
+            $("#teachername").text(displayData['Name']);
+            $("#teacheremail").text(displayData['email']);
+            $("#teachertotalsession").text(displayData['total_sessions']);
+            $("#teacherphone").text(displayData['phone number']);
+            $("#teachercurbalance").text(displayData['cur_balance']);
+            $("#teachertotalearned").text(displayData['total_earned']);
+            $("#paypalemail").text(displayData['payment_detail']['paypal_email']);
+
+            let bankdetail = displayData['payment_detail']['bank_detail'];
+            $("#iban").text(bankdetail['IBAN']);
+            $("#bankname").text(bankdetail['bank name']);
+            $("#routingnumber").text(bankdetail['routing number']);
+            $("#accountingnumber").text(bankdetail['account number']);
+            $("#reciepietname").text(bankdetail['receipient name']);
+        })
+        renderTable = function () {
+            sessionlist = displayData['session_list'];
+            if (sessionlist.length > 0) {
+                for (let i = 0; i < sessionlist.length; i++) {
+                    let session = sessionlist[i];
+                    $("#previoussessionhistory").append(
+                        '<tr><td>' +
+                        session['date'] +
+                        '</td><td>' +
+                        '<a href="/session-detail/' +
+                        session['Session_ID'] +
+                        '" class="text-decoration-none">' +
+                        session['Session_ID'] +
+                        '</a>' +
+                        '</td><td>' +
+                        '<a href="/admin/student-info/' +
+                        session['student_id'] +
+                        '" class="text-decoration-none">' +
+                        session['Student Name'] +
+                        '</a>' +
+                        '</td><td>' +
+                        session['Duration'] +
+                        '</td><td>' +
+                        session['Amount'] +
+                        '</td><td>' +
+                        session['rating'] +
+                        '</td></tr>'
+                    )
+                }
+            }
+        }
+        function fnAddBalance() {
+            var amount = parseFloat($("#addbalanceamount").val());
+            var curBalance = parseFloat(displayData['cur_balance']);
+            if (amount <= 0 || $("#addbalanceamount").val() == '') {
+                alertInfo("Enter correct amount!");
+                return;
+            }
+            ajaxUrl = '/admin/balance-manage/' + displayData['teacher id'];
+            param = {
+                'job': 'teacher',
+                'manageMethod': 'addBalance',
+                'amount': amount
+            }
+            sendAjax(ajaxUrl, param);
+        }
+
+        function fnRemoveBalance() {
+            var amount = parseFloat($("#removebalanceamount").val());
+            var curBalance = parseFloat(displayData['cur_balance']);
+            if (amount <= 0 || $("#removebalanceamount").val() == '') {
+                alertInfo("Enter correct amount!");
+                return;
+            }
+            if (amount > curBalance) {
+                alertInfo("Amount should be less than current balance");
+                return;
+            }
+            ajaxUrl = '/admin/balance-manage/' + displayData['teacher id'];
+            param = {
+                'job': 'teacher',
+                'manageMethod': 'removeBalance',
+                'amount': amount
+            }
+            sendAjax(ajaxUrl, param);
+        }
+
+        function sendAjax(ajaxUrl, param) {
+            $.ajax({
+                url: ajaxUrl,
+                type: 'POST',
+                dataType: 'json',
+                data: {'data': JSON.stringify(param)},
+                success: function (res) {
+                    if (res['success'] == true) {
+                        alertSuccess("Operating Successed!")
+                    } else {
+                        alertError(res['msg'])
+                    }
+                },
+                error: function () {
+                    alertError("Operating Failed")
+                }
+            })
+        }
+
+        function fnRemoveUser() {
+            ajaxUrl = '/admin/remove-one/' + displayData['teacher id'];
+            param = {'id': displayData['teacher id'], 'job': 'teacher'}
+            sendAjax(ajaxUrl, param);
+        }
+        
+    </script>
+{% endblock %}

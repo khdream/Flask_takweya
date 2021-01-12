@@ -1,0 +1,461 @@
+{% extends 'header.html' %}
+{% block content %}
+    {#    <div class="container custom-container">#}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Statistics
+            </div>
+        </div>
+        <div class="row shadow my-5">
+            <div class="col-md-6 border-right">
+                <canvas id="canvas" class="shadow-lg mb-md-3"
+                        style="height: 100%; max-width: 520px; margin: 0px auto;"></canvas>
+            </div>
+            <div class="col-md-6">
+                <canvas id="canvas1" class="shadow-lg"
+                        style="height: 100%; max-width: 520px; margin: 0px auto;"></canvas>
+            </div>
+        </div>
+
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Edit Payment Information
+            </div>
+        </div>
+        <div class="row pl-5 my-5">
+            <button class="btn btn-outline-danger mr-sm-3 mb-3" data-toggle="modal" data-target="#editbankdetailmodal"
+                    style="min-width: 165px"><span
+                    class="font-weight-bolder">Edit bank details</span></button>
+            <button class="btn btn-outline-danger mb-3" data-toggle="modal" data-target="#editpaypaldetailmodal"
+                    style="min-width: 165px"><span
+                    class="font-weight-bolder">Edit paypal details</span></button>
+        </div>
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Current Account Balance
+            </div>
+        </div>
+        <div class="row my-5 card">
+            <div class="col-md-12 card-header d-flex justify-content-around">
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="paymentmethod1" name="paymentmethod"
+                           class="custom-control-input" checked>
+                    <label class="custom-control-label" for="paymentmethod1">Paypal</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input type="radio" id="paymentmethod2" name="paymentmethod"
+                           class="custom-control-input">
+                    <label class="custom-control-label" for="paymentmethod2">Bank</label>
+                </div>
+            </div>
+            <div class="card-body col-md-12">
+                <div class="row">
+                    <div class="col-md-4 d-flex justify-content-center align-items-center">
+                        <span class="fa fa-money fa-2x text-success ml-3"> </span>
+                        <span class="align-text-bottom ml-3" id="totalearned"></span>
+                    </div>
+                    <div class="col-md-4 d-flex justify-content-center align-items-center">
+                        <input type="number" min="0" max="5" class="form-control" id="withdrawamount" placeholder="Amount">
+                    </div>
+                    <div class="col-md-4 d-flex justify-content-center align-items-center">
+                        <button class="btn btn-success shadow" id="withdrawbtn">
+                        <span class="align-text-bottom">Withdraw </span>
+                    </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Financial History
+            </div>
+        </div>
+        <div class="row mt-5 justify-content-center">
+            <table class="table table-responsive-sm" id="sessiontable">
+                <thead>
+                <tr>
+                    <th><span>Date</span></th>
+                    <th><span>Session ID</span></th>
+                    <th><span>Duration</span></th>
+                    <th><span>New Balance</span></th>
+                    <th><span>Earned Money</span></th>
+                    <th><span>Details</span></th>
+                </tr>
+                </thead>
+                <tbody id="sessionlist">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editpaypaldetailmodal">
+        <div class="modal-dialog modal-lg mw-100">
+            <div class="modal-content" style="max-width: 800px!important;">
+                <div class="modal-body">
+                    <div class="row mt-3">
+                        <div class="col-md-3 justify-content-center align-self-center">Paypal email :
+                        </div>
+                        <div class="col-md-9 mt-3 flex-fill"><input type="text" class="ml-3 borderBottomEff"
+                                                                    id="paypalemail"
+                                                                    placeholder="Paypal email"
+                                                                    value="{{ user['Paypal email'] }}"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" id="paypaldetailsave">Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editbankdetailmodal">
+        <div class="modal-dialog modal-lg mw-100">
+            <div class="modal-content" style="max-width: 800px!important;">
+                <div class="modal-body">
+                    <div class="row mt-3">
+                        <div class="col-md-6 justify-content-center align-self-center">ABA/Routing number of the
+                            receiving bank (optional) :
+                        </div>
+                        <div class="col-md-6 mt-3 flex-fill"><input type="text" class="ml-3 borderBottomEff"
+                                                                    id="abaroutingNum"
+                                                                    placeholder="ABA/Routing number"
+                                                                    value="{{ bank_detail['routing number'] }}"></div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6 justify-content-center align-self-center">Bank Name :</div>
+                        <div class="col-md-6 mt-3 flex-fill"><input type="text" class="ml-3 borderBottomEff"
+                                                                    id="bankname"
+                                                                    placeholder="Bank Name"
+                                                                    value="{{ bank_detail['bank name'] }}"></div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6 justify-content-center align-self-center">Recipient’s bank account number
+                            :
+                        </div>
+                        <div class="col-md-6 mt-3 flex-fill"><input type="text" class="ml-3 borderBottomEff"
+                                                                    id="recipientbanknumber"
+                                                                    placeholder="Recipient’s bank account number"
+                                                                    value="{{ bank_detail['account number'] }}"></div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6 justify-content-center align-self-center">Recipient’s name (as listed on
+                            the account) :
+                        </div>
+                        <div class="col-md-6 mt-3 flex-fill"><input type="text" class="ml-3 borderBottomEff"
+                                                                    id="recipientname"
+                                                                    placeholder="Recipient’s name"
+                                                                    value="{{ bank_detail['receipient name'] }}"></div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6 justify-content-center align-self-center">Recipient’s address (as listed on
+                            the account) :
+                        </div>
+                        <div class="col-md-6 mt-3 flex-fill"><input type="text" class="ml-3 borderBottomEff"
+                                                                    id="recipientaddress"
+                                                                    placeholder="Recipient’s address"
+                                                                    value="{{ bank_detail['receipient address'] }}">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6 justify-content-center align-self-center">IBAN number :</div>
+                        <div class="col-md-6 mt-3 flex-fill"><input type="text" class="ml-3 borderBottomEff"
+                                                                    id="ibanumber"
+                                                                    placeholder="IBAN number"
+                                                                    value="{{ bank_detail['IBAN'] }}"></div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success px-5 mr-5" data-dismiss="modal" id="bankdetailsave">
+                        Save
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        var paymentMethod = "";
+        var withdrawamount = 0;
+        var user = {{ user | tojson}};
+        window.onload = function () {
+            var timeFormat = 'DD/MM/YYYY';
+            var config = {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: "Minutes",
+                            data: [],
+                            fill: false,
+                            borderColor: 'black'
+                        },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: "Total Hours"
+                    },
+                    scales: {
+                        xAxes: [{
+                            type: "time",
+                            time: {
+                                format: timeFormat,
+                                tooltipFormat: 'll'
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Date'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Minutes'
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                            },
+                        }]
+                    }
+                }
+            };
+            var config1 = {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: "Earned",
+                            data: [],
+                            fill: false,
+                            borderColor: 'black'
+                        },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: "Total Earned"
+                    },
+                    scales: {
+                        xAxes: [{
+                            type: "time",
+                            time: {
+                                format: timeFormat,
+                                tooltipFormat: 'll'
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Date'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'value'
+                            }, ticks: {
+                                beginAtZero: true,
+                            },
+                        }]
+                    }
+                }
+            };
+
+
+            for (let i = 0; i < user['session'].length; i++) {
+                let date = user['session'][i]['date'];
+                date = date.split(',');
+                date = date[0];
+                var length_t = user['session'][i]['length'];
+                var time = length_t.split(':');
+                var minute = time[1];
+                minute = minute / 60.0
+                console.log(minute);
+                length_t = parseInt(time[0]) + parseFloat(minute);
+                config['data']['datasets'][0]['data'].push({x: date, y: length_t});
+            }
+            console.log(config);
+            var ctx = document.getElementById("canvas").getContext("2d");
+            window.myLine = new Chart(ctx, config);
+
+            for (i = 0; i < user['session'].length; i++) {
+                date = user['session'][i]['date'];
+                earnedmoney = user['session'][i]['earned_money'];
+                config1['data']['datasets'][0]['data'].push({x: date, y: earnedmoney});
+            }
+            var ctx = document.getElementById("canvas1").getContext("2d");
+            window.myLine = new Chart(ctx, config1);
+
+
+            $("#totalearned").text("{{ user['balance'] }}");
+            renderTable()
+            $("#sessiontable").DataTable();
+        }
+        $("#paypaldetailsave").click(function () {
+            paypalemail = $("#paypalemail").val();
+            param = {
+                'paypalemail': paypalemail,
+            };
+            $.ajax({
+                url: '/teacher/paypal-save',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(param)},
+                success: function (res) { // display success response
+                    if (res['success'] == true) {
+                        alertSuccess("Paypal information save successed!")
+                    } else {
+                        alertError("Paypal information save  failed!");
+                    }
+                },
+                error: function () {
+                    alertError("Paypal information save  failed!");
+                }
+            });
+        });
+        $("#bankdetailsave").click(function () {
+            abaroutingnum = $("#abaroutingNum").val();
+            bankname = $("#bankname").val();
+            recipientbanknumber = $("#recipientbanknumber").val();
+            recipientname = $("#recipientname").val();
+            recipientaddress = $("#recipientaddress").val();
+            ibanumber = $("#ibanumber").val();
+            param = {
+                'abaroutingnum': abaroutingnum,
+                'bankname': bankname,
+                'recipientbanknumber': recipientbanknumber,
+                'recipientname': recipientname,
+                'recipientaddress': recipientaddress,
+                'ibanumber': ibanumber,
+            };
+            console.log(param);
+            $.ajax({
+                url: '/teacher/bankdetail-save',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(param)},
+                success: function (res) { // display success response
+                    if (res['success'] == true) {
+                        alertSuccess("Bank information save successed!")
+                    } else {
+                        alertError("Bank information save  failed!");
+                    }
+                },
+                error: function () {
+                    alertError("Bank information save  failed!");
+                }
+            });
+
+        });
+        $("#withdrawbtn").click(function () {
+            withdrawamount = $("#withdrawamount").val();
+            totalearned = parseFloat($("#totalearned").html());
+            if (withdrawamount < 200) {
+                alertInfo("Minimum withdraw requirement is 200 AED");
+                return;
+            }
+            if (withdrawamount > totalearned) {
+                alertInfo("Maximum withdraw requirement is " + totalearned + " AED");
+                return;
+            }
+            if ($("#paymentmethod1").is(":checked")) {
+                paymentMethod = "paypal"
+            }
+            if ($("#paymentmethod2").is(":checked")) {
+                paymentMethod = "bank"
+            }
+            if(paymentMethod == 'paypal'){
+                paypalemail = $("#paypalemail").val();
+                if(paypalemail.trim() == ""){
+                    alertInfo("Please edit your paypal information.");
+                    return;
+                }
+            }else{
+                routing = $("#abaroutingNum").val().trim();
+                bankname = $("#bankname").val().trim();
+                banknumber = $("#recipientbanknumber").val().trim();
+                name = $("#recipientname").val().trim();
+                address = $("#recipientaddress").val().trim();
+                iban = $("#ibanumber").val().trim();
+                if(bankname == '' || banknumber == '' || name == '' || address == '' || iban == ''){
+                    alertInfo("Please enter correct bank detail.");
+                    return;
+                }
+            }
+            
+            $.confirm({
+                title: 'Question',
+                content: 'Are you sure withdraw ' + withdrawamount + ' AED with ' + paymentMethod + '?',
+                type: 'purple',
+                typeAnimated: true,
+                buttons: {
+                    ok: {
+                        text: 'Yes',
+                        btnClass: 'btn-purple px-5 mr-3',
+                        action: function () {
+                            perform_withdraw();
+                        }
+                    },
+                    close: function () {
+                    }
+                }
+            });
+        });
+
+        function perform_withdraw() {
+            param = {'withdrawamount': withdrawamount, 'paymentMethod': paymentMethod}
+            $.ajax({
+                url: '/teacher/withdraw',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(param)},
+                success: function (res) { // display success response
+                    console.log(res);
+                    if (res['success'] == true) {
+                        alertSuccess("withdraw request send success!")
+                    } else {
+                        alertInfo(res['msg']);
+                    }
+                },
+                error: function () {
+                    alertError("Withdraw Failed!");
+                }
+            });
+        }
+
+
+        renderTable = function () {
+            if (user['session'].length > 0) {
+                for (let i = 0; i < user['session'].length; i++) {
+
+                    let date = user['session'][i]['date'];
+                    let session_id = user['session'][i]['session_id'];
+                    let length_t = user['session'][i]['length'];
+                    let new_balance = user['session'][i]['new_balance'];
+                    let earned_money = user['session'][i]['earned_money'];
+
+                    $("#sessionlist").append('<tr><td>' +
+                        date +
+                        '</td><td>' +
+                        session_id +
+                        '</td><td>' +
+                        length_t +
+                        '</td><td>' +
+                        new_balance +
+                        '</td><td>' +
+                        earned_money +
+                        '</td><td>' +
+                        '<a href="/session-detail/' +
+                        session_id +
+                        '"> <i aria-hidden="true" class="v-icon notranslate fa fa-eye theme--light" style="font-size: 16px;"></i> </a>' +
+                        '</td></tr>')
+                }
+            }
+        }
+    </script>
+
+{% endblock %}

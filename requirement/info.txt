@@ -1,0 +1,24 @@
+
+https://dashboard.takweya.com/
+
+admin:
+	ddddd@ddddd.cc
+	$2a$10$e7WBOjbXRdlvNAAv2JPXC.AmvWbgC8TsvZkuaD4xBW.bWeyALNKZu
+
+Teacher
+	ronaldrossmanorpark@gmail.com
+	R0MJa4xMOL
+
+student:
+	hehehe@lol.com
+	Ass@nkoya12
+
+----------- Virtaul Class Api ------------
+http://developer.wiziq.com/
+
+Secret Key : ke92BAbYVAK3UyB+Rd8Axw==
+Access Key : 7Q0Pdeveh24=
+
+
+API Documentation : http://developer.wiziq.com/documentation
+Sample Codes : http://developer.wiziq.com/sample-code

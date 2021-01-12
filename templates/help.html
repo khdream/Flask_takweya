@@ -1,0 +1,48 @@
+{% extends 'header.html' %}
+{% block content %}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <div class="row mb-3 justify-content-center"><h4 class="text-center text-muted">Help Center</h4></div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea class="form-control" rows="5" id="message" placeholder="Your message"></textarea>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button id="sendmessage" class="btn btn-primary" style="width: 100px">Submit</button>
+                </div>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $("#sendmessage").click(function () {
+                var message =$("#message").val();
+                console.log("message",message);
+                if (message==""){
+                    alertInfo("Please enter your message!")
+                }else{
+                    param = {'msg': message};
+                $.ajax({
+                    url: '/send-report',
+                    type: 'POST',
+                    dataType: "json",
+                    data: {'data': JSON.stringify(param)},
+                    success: function (res) { // display success response
+                        console.log(res);
+                        if (res['success'] == true) {
+                            alertSuccess("Reported successfully.")
+                        } else {
+                            alertError("Report sending failed!");
+                        }
+                    },
+                    error: function () {
+                        alertError("Report sending failed!");
+                    }
+                })}
+            })
+        })
+    </script>
+{% endblock %}

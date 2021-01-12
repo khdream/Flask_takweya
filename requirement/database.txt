@@ -1,0 +1,134 @@
+students
+	_id
+	email
+	password
+	First Name
+	Last Name
+	Phone Number
+	Date of Birth
+	Date Signed Up
+	Balance
+	Education Level
+	Address
+	Rating
+	Telegram
+	Payment Method
+	***
+	status 0:singup 1:accept 2:decline 3:block
+teachers
+	_id
+	First Name
+	Last Name
+	email
+	Date Of Birth
+	/*image
+	Id Document	:file id
+	Certificate Document :file id	
+	Additional Document	:file id
+	Teaching Levels
+	Subjects	:List array
+	Experience
+	Graduate
+	Phone Number
+	mobile_number
+	time_zone
+	hourly
+	balance
+	password
+	Date Signed Up
+	Rating
+	Photo: fs file
+	Address	
+	Paypal email
+	Bank detail{
+		receipient name:
+		receipient address:
+		bank name:
+		routing number:
+		account number
+		IBAN
+	}
+	teacher_id: received from virtual class
+	Telegram User Name
+	approve 0:pending, 1:accepted, 2:decline 3:blocked
+is_loggedin
+	user: str(user_id)
+        is_loggedin: True
+	is_online: True/False
+	
+questions
+	_id
+	question
+	images	: List[file id]
+	user_id : student's id
+	subject
+	Date of Question
+	 - - -  - - 
+	status: 0:sent to teachers 1: teacher accept 2:student accept 3: live 4:closed
+	teachers[{id: teacher_id. accept: 0, 1: accept(counting) 2:decline 3:declined by student}]
+	accepted_teacher: teacher_id
+	sesson: session_id
+sessions
+	_id
+	student_id
+	teacher_id
+	Start Time
+	Duration
+	Price paid
+	question id
+	video
+	Student Rating
+	Teacher rating
+	 - - - -
+	presenter_email: used when create class
+	presenter_url
+	attendee_url
+	recording_url
+	return_url
+	status_ping_url
+	class_id
+	status:  0:create, 1:live, 2:complete, 3:cancel  4:flaged
+	new_balance
+transactions:
+	_id
+	user_id: 
+	payment_method: 'payapal'
+	amount:
+	funded_amount	
+	fee:
+	payment_id:
+	payer_id
+	invoice_number: invoice number
+	new_balance
+	tran_time
+
+withdraws
+	_id:
+	user_id
+	amount
+	request number
+	request_date
+	complete_date
+	payment method
+	status:	0:pending 1: complete 2:cancel
+
+--------------------------------------Missed part---------------------------
+- student
+	singup(blank field)
+	dashboard session history(backend send data, frontend)
+	session-detail (backend, frontend)
+	profile (backend send data, save data)
+	
+- teacher
+	singup(blank field)//com
+	dashboard(chart, online, class-duration, complete, ping_url)
+	teacher financial(edit bank details-modal, withdraw-paypal)
+	teacher session history(backend send data, frontend receive data)
+	
+	
+save profile email duplicate check
+teacher singup=>added to is_loggedin, normally not added on singup . only admin can add teacher to is_loggeedin when accept
+
+7 993 204 0021
+971 505 555 237
+

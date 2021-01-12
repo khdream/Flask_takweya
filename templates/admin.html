@@ -1,0 +1,361 @@
+{% extends 'header.html' %}
+
+{% block content %}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mb-5">
+            <div class="question-header">
+                Analytics
+            </div>
+        </div>
+        <div class="row" style="max-width: 99%">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="totalsignupscanvas" class="shadow-lg"
+                                style="height: 100%; max-width: 520px; margin: 0px auto;"></canvas>
+                    </div>
+                    <div class="card-header d-flex justify-content-center">
+                        <span class="fa fa-clock-o text-muted mr-2"></span><span
+                            class="text-muted font-weight-light ">Total Signups</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="totaltutoringcanvas" class="shadow-lg"
+                                style="height: 100%; max-width: 520px; margin: 0px auto;"></canvas>
+                    </div>
+                    <div class="card-header d-flex justify-content-center">
+                        <span class="fa fa-comments text-muted mr-2"></span><span
+                            class="text-muted font-weight-light">Total Tutoring</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="averagetutoringcanvas" class="shadow-lg"
+                                style="height: 100%; max-width: 520px; margin: 0px auto;"></canvas>
+                    </div>
+                    <div class="card-header d-flex justify-content-center">
+                        <span class="fa fa-comment text-muted mr-2"></span><span
+                            class="text-muted font-weight-light">Avarage Tutoring</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="revenuecanvas" class="shadow-lg"
+                                style="height: 100%; max-width: 520px; margin: 0px auto;"></canvas>
+                    </div>
+                    <div class="card-header d-flex justify-content-center">
+                        <span class="fa fa-thumbs-up text-muted mr-2"></span><span
+                            class="text-muted font-weight-light">Revenue</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row my-5">
+            <div class="text-center col-sm-5 col-12">
+                <button class="btn btn-outline-danger form-control my-1"
+                        onclick="location.href='/admin/teacher-applications';"><span
+                        class="font-weight-bold">TEACHER APPLICATIONS</span>
+                </button>
+                <button class="btn btn-outline-danger form-control my-1" onclick="location.href='/admin/allusers';">
+                    <span class="font-weight-bold">ALL USERS</span>
+                </button>
+                <button class="btn btn-outline-danger form-control my-1"
+                        onclick="location.href='/admin/financial';"><span
+                        class="font-weight-bold">FINANCIALS</span></button>
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="text-center col-sm-5 col-12">
+                <button class="btn btn-outline-danger form-control my-1"
+                        onclick="location.href='/admin/live-sessions';"><span
+                        class="font-weight-bold">LIVE SESSIONS</span></button>
+                <button class="btn btn-outline-danger form-control my-1"
+                        onclick="location.href='/admin/sessions-history';"><span
+                        class="font-weight-bold">SESSION HISTORY</span></button>
+                <button class="btn btn-outline-danger form-control my-1" onclick="location.href='/admin/flags';"><span
+                        class="font-weight-bold">FLAGS</span>
+                </button>
+            </div>
+        </div>
+        <hr>
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                Statistics
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-lg-3 col-sm-8">
+                <div class="row">
+                    <div class="col-sm-12 px-4">
+                        <div class="d-flex align-items-center border-right shadow">
+                            <span class="fa fa-cogs fa-2x ml-3 text-primary"></span>
+                            <div class="card border-0">
+                                <span class="card-title my-0 mx-2 font-weight-bold text-secondary"
+                                      style="font-size: 15px">Sessions</span>
+                                <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                            </div>
+                            <span class="align-text-bottom ml-3" id="totalsession">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-8">
+                <div class="row">
+                    <div class="col-sm-12 px-4">
+                        <div class="d-flex align-items-center border-right shadow">
+                            <span class="fa fa-graduation-cap fa-2x text-success ml-3"> </span>
+                            <div class="card border-0">
+                                <span class="card-title my-0 mx-2 font-weight-bold text-secondary"
+                                      style="font-size: 15px">Students</span>
+                                <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                            </div>
+                            <span class="align-text-bottom ml-3" id="totalstudents">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-8">
+                <div class="row">
+                    <div class="col-sm-12 px-4">
+                        <div class="d-flex align-items-center border-right shadow">
+                            <span class="fa fa-users fa-2x text-danger ml-3"> </span>
+                            <div class="card border-0">
+                                <span class="card-title my-0 mx-2 font-weight-bold text-secondary"
+                                      style="font-size: 15px">Teachers</span>
+                                <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                            </div>
+                            <span class="align-text-bottom ml-3" id="totalteachers">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-8">
+                <div class="row">
+                    <div class="col-sm-12 px-4">
+                        <div class="d-flex align-items-center border-right shadow">
+                            <span class="fa fa-money fa-2x text-warning ml-3"> </span>
+                            <div class="card border-0">
+                                <span class="card-title my-0 mx-2 font-weight-bold text-secondary"
+                                      style="font-size: 15px">Revenue</span>
+                                <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                            </div>
+                            <span class="align-text-bottom ml-3" id="totalrevenue">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var displayData = {{ all_data | tojson }};
+        var timeFormat = 'YYYY-MM-DD';
+        var totalsignupscanvasconfig = {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: "signups",
+                        data: [],
+                        fill: false,
+                        borderColor: 'black'
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: "Total Signups"
+                },
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            format: timeFormat,
+                            tooltipFormat: 'll'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'signups'
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                    }]
+                }
+            }
+        };
+        var totaltutoringcanvasconfig = {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: "tutoring",
+                        data: [],
+                        fill: false,
+                        borderColor: 'black'
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: "Total tutoring"
+                },
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            format: timeFormat,
+                            tooltipFormat: 'll'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'tutoring'
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                    }]
+                }
+            }
+        };
+        var averagetutoringcanvasconfig = {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: "tutoring",
+                        data: [],
+                        fill: false,
+                        borderColor: 'black'
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: "Average tutoring"
+                },
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            format: timeFormat,
+                            tooltipFormat: 'll'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'tutoring'
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                    }]
+                }
+            }
+        };
+        var revenuecanvasconfig = {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: "revenue",
+                        data: [],
+                        fill: false,
+                        borderColor: 'black'
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: "Revenue"
+                },
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            format: timeFormat,
+                            tooltipFormat: 'll'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'revenue'
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                    }]
+                }
+            }
+        };
+        $(function () {
+            canvasDataconfig(displayData['sign_up_list'], totalsignupscanvasconfig);
+            var ctx = document.getElementById("totalsignupscanvas").getContext("2d");
+            window.myLine = new Chart(ctx, totalsignupscanvasconfig);
+
+            canvasDataconfig(displayData['session_list'], totaltutoringcanvasconfig);
+            var ctx = document.getElementById("totaltutoringcanvas").getContext("2d");
+            window.myLine = new Chart(ctx, totaltutoringcanvasconfig);
+            console.log(displayData['session_list']);
+
+            canvasDataconfig(displayData['avg_session_list'], averagetutoringcanvasconfig);
+            var ctx = document.getElementById("averagetutoringcanvas").getContext("2d");
+            window.myLine = new Chart(ctx, averagetutoringcanvasconfig);
+
+            canvasDataconfig(displayData['revenue_list'], revenuecanvasconfig);
+            var ctx = document.getElementById("revenuecanvas").getContext("2d");
+            window.myLine = new Chart(ctx, revenuecanvasconfig);
+
+            $("#totalsession").text(displayData['total_sessions']);
+            $("#totalteachers").text(displayData['total_teachers']);
+            $("#totalstudents").text(displayData['total_students']);
+            $("#totalrevenue").text(displayData['total_revenue']);
+        })
+        canvasDataconfig = function (data, config) {
+            var configData = [];
+            for (let i = 0; i < data.length; i++) {
+                configX = data[i][0];
+                configY = data[i][1];
+                tempData = {x: configX, y: configY}
+                configData.push(tempData);
+            }
+            config['data']['datasets'][0]['data'] = configData
+        }
+    </script>
+{% endblock %}

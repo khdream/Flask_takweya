@@ -1,0 +1,148 @@
+{% extends 'header.html' %}
+{% block content %}
+
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Session Details
+            </div>
+        </div>
+        <div class="row shadow my-5">
+            <div class="d-flex align-items-center border-right col-md-5">
+                <span class="fa fa-calendar-check-o fa-2x text-success ml-3"></span>
+                <span class="align-text-bottom ml-3" id="date"></span>
+            </div>
+            <div class="d-flex align-items-center col-md-4 border-right">
+                <span class="fa fa-clock-o fa-2x text-success ml-3"> </span>
+                <span class="align-text-bottom ml-3" id="times"></span>
+            </div>
+            <div class="d-flex align-items-center col-md-3">
+                <span class="fa fa-money fa-2x text-success ml-3"> </span>
+                <span class="align-text-bottom ml-3" id="earnedmoney"></span>
+            </div>
+        </div>
+        <div class="row shadow my-5">
+            <div class="d-flex align-items-center border-right col-md-5">
+                <span class="fa fa-key fa-2x text-warning ml-md-3"> </span>
+                <span class="align-text-bottom ml-md-3" id="sessionkey"></span>
+            </div>
+            <div class="d-flex align-items-center col-md-4 border-right">
+                <span class="fa-2x ml-md-3" id="name"></span>
+            </div>
+            <div class="d-flex align-items-center col-md-3 disabled">
+                <span class="fa fa-graduation-cap fa-2x text-success ml-3"></span>
+                <span class="ml-3" id="subject"></span>
+            </div>
+        </div>
+        <div class="row pl-1 mb-2 mt-5 pt-5">
+            <div class="question-header">
+                Asked Question
+            </div>
+        </div>
+        <div class="row shadow my-5 pl-4">
+            <h5 id="askedquestion">I need help with lesson number 5{asked questions}</h5>
+        </div>
+        <div class="row pl-1 mb-2 py-5">
+            <div class="question-header">
+                Pictures Attached
+            </div>
+        </div>
+        <div class="row mt-4 pl-4 d-flex flex-wrap">
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px" id="attachedimages">
+            </div>
+        </div>
+        <div class="row pl-1 mb-2 mt-5 pt-5">
+            <div class="question-header">
+                Video
+            </div>
+        </div>
+        <div class="row pl-1 mb-2 mt-5 d-flex justify-content-center" id="video">
+        </div>
+        <div class="row pl-1 mb-2 mt-5">
+            <div class="question-header">
+                Download
+            </div>
+        </div>
+        <div class="row my-5">
+            <div class="d-flex justify-content-center col-md-6 mt-3">
+                <button class="btn btn-success" style="width: 200px" id="videodownload">Class video download</button>
+            </div>
+            {% if user['job'] != 'admin' %}
+            <div class="d-flex justify-content-center col-md-6 mt-3">
+                <button class="btn btn-danger" style="width:200px" id="reportbtn">REPORT</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        console.log({{ session_info | tojson}});
+        session_info = {{ session_info | tojson}}
+            $(function () {
+                $("#date").text(session_info['Start Time']);
+                $("#times").text(session_info['Duration']);
+                $("#earnedmoney").text(session_info['Price Paid']);
+                $("#sessionkey").text(session_info['session_id']);
+                $("#name").text({{user['show_name'] | tojson}});
+                $("#subject").text(session_info['subject']);
+                $("#askedquestion").text(session_info['question']);
+
+                console.log(session_info['picture'])
+
+                for (let i = 0; i < session_info['picture'].length; i++) {
+                    image = '<img ' +
+                        'src="/static/uploads/' +
+                        session_info['picture'][i] +
+                        '" class="tomodal-img m-2" alt="Takweya" title=""' +
+                        'width="200px" height="200px">';
+                    $("#attachedimages").append(image)
+                }
+                video = '<iframe src="https:' +
+                    session_info['video_download'] +
+                    '" width="1000" height="500">';
+                $("#video").append(video);
+                $("#videodownload").click(function () {
+                    $("#videodownload").append('<span style="width: 20px; height: 20px" class="spinner-border text-warning ml-1"  role="status">\n' +
+                        '  <span class="sr-only">Loading...</span>\n' +
+                        '</span>')
+                    console.log(session_info['session_id'])
+                    $.ajax({
+                        url: '/video-download/' + session_info['session_id'],
+                        type: 'POST',
+                        dataType: "json",
+                        success: function (res) { // display success response
+                            if (res['success'] == true) {
+                                downloadurl = res['url'];
+                                window.open(downloadurl);
+                                $("#videodownload").empty()
+                                $("#videodownload").html("Class video download");
+                            } else {
+                                alertError("video download failed");
+                                $("#videodownload").empty()
+                                $("#videodownload").html("Class video download");
+                            }
+                        },
+                        error: function () {
+                            alertError("video download failed");
+                        }
+                    });
+                });
+                $("#reportbtn").click(function () {
+                    $.ajax({
+                        url: '/session/report/' + session_info['session_id'],
+                        type: 'POST',
+                        dataType: "json",
+                        success: function (res) { // display success response
+                            if (res['success'] == true) {
+                                window.location = '/help';
+                            } else {
+                                alertError("Report sending failed!");
+                            }
+                        },
+                        error: function () {
+                            alertError("Report sending failed!");
+                        }
+                    })
+                });
+            });
+    </script>
+{% endblock %}

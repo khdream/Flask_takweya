@@ -1,0 +1,197 @@
+{% extends 'header.html' %}
+{% block content %}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mb-5">
+            <div class="question-header">
+                Financials
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div style="min-width: 300px" class="col-lg-2 col-md-12 col-md-8 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-files-o fa-2x ml-3 text-primary"></span>
+                    <div class="card border-0">
+                        <span class="card-title my-0 mx-2 font-weight-bold text-secondary" style="font-size: 15px">Revenue</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="totalrevenue">0</span>
+                </div>
+            </div>
+            <div style="min-width: 300px" class="col-lg-2 col-md-12 col-md-8 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-dollar fa-2x text-danger ml-3"> </span>
+                    <div class="card border-0">
+                        <span class="card-title my-0 mx-2 font-weight-bold text-secondary" style="font-size: 15px">Withdraw</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Pending</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="pendingwithdraw">0</span>
+                </div>
+            </div>
+            <div style="min-width: 300px" class="col-lg-2 col-md-12 col-md-8 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-file text-info fa-2x text-success ml-3"> </span>
+                    <div class="card border-0">
+                        <span class="card-title my-0 mx-2 font-weight-bold text-secondary" style="font-size: 15px">Teachers</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Paid</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="paidteachers">0</span>
+                </div>
+            </div>
+            <div style="min-width: 300px" class="col-lg-2 col-md-12 col-md-8 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-google-wallet text-success fa-2x text-success ml-3"> </span>
+                    <div class="card border-0">
+                        <span class="card-title my-0 mx-2 font-weight-bold text-secondary" style="font-size: 15px">Students</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Wallet</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="studentswallet">0</span>
+                </div>
+            </div>
+            <div style="min-width: 300px" class="col-lg-2 col-md-12 col-md-8 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-google-wallet fa-2x text-warning ml-3"> </span>
+                    <div class="card border-0">
+                        <span class="card-title my-0 mx-2 font-weight-bold text-secondary" style="font-size: 15px">Teachers</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Wallet</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="teacherswallet">0</span>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                Recent Transactions
+            </div>
+        </div>
+        <div class="row my-5 d-flex justify-content-center">
+            <table class="table table-responsive-lg" id="recenttransactions">
+                <thead>
+                <tr>
+                    <th><span>Date</span></th>
+                    <th><span>Student's name</span></th>
+                    <th><span>Amount</span></th>
+                    <th><span>Invoice</span></th>
+                    <th><span>New Balance</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" class="text-muted" id="recenttransactionlist">
+                </tbody>
+            </table>
+        </div>
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                Pending Withdraws
+            </div>
+        </div>
+        <div class="row my-5 d-flex justify-content-center">
+            <table class="table table-responsive-lg" id="pendingwithdraws">
+                <thead>
+                <tr>
+                    <th><span>Date</span></th>
+                    <th><span>Teacher</span></th>
+                    <th><span>Amount</span></th>
+                    <th><span>Withdraw Request</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" class="text-muted" id="pendingwithdrawlist">
+                </tbody>
+            </table>
+        </div>
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                Withdraw History
+            </div>
+        </div>
+        <div class="row my-5 d-flex justify-content-center">
+            <table class="table table-responsive-lg" id="withdrawhistory">
+                <thead>
+                <tr>
+                    <th><span>Date</span></th>
+                    <th><span>Teacher</span></th>
+                    <th><span>Amount</span></th>
+                    <th><span>Withdraw Request</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" class="text-muted" id="withdrawhistorylist">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        displayData = {{ all_info | tojson }};
+        console.log(displayData);
+        $(function () {
+            renderPendingTable();
+            renderTransactionTable();
+            renderWithdrawHistoryTable()
+            $("#recenttransactions").DataTable()
+            $("#pendingwithdraws").DataTable()
+            $("#withdrawhistory").DataTable()
+            $("#totalrevenue").text(displayData['t_revenue'])
+            $("#pendingwithdraw").text(displayData['t_pending_withdraw'])
+            $("#paidteachers").text(displayData['t_paid_to_teach'])
+            $("#studentswallet").text(displayData['t_student_w'])
+            $("#teacherswallet").text(displayData['t_teacher_w'])
+        })
+        renderWithdrawHistoryTable = function () {
+            if (displayData['withdraw_list'].length > 0) {
+                let histories = displayData['withdraw_list'];
+                for (let i = 0; i < histories.length; i++) {
+                    let history = histories[i];
+                    $("#withdrawhistorylist").append(
+                        '<tr><td>' +
+                        history['date'] +
+                        '</td><td>' +
+                        history['teacher_name'] +
+                        '</td><td>' +
+                        history['amount'] +
+                        '</td><td>' +
+                        history['withdraw_request'] +
+                        '</td></tr>'
+                    )
+                }
+            }
+        }
+        renderPendingTable = function () {
+            if (displayData['pending_w'].length > 0) {
+                for (let i = 0; i < displayData['pending_w'].length; i++) {
+                    pendingWithdraw = displayData['pending_w'][i]
+                    $("#pendingwithdrawlist").append('<tr><td>' +
+                        pendingWithdraw['date'] +
+                        '</td><td>' +
+                        '<a href="/admin/teacher-info/' +
+                        pendingWithdraw['teacher_id'] +
+                        '" class="text-decoration-none">' +
+                        pendingWithdraw['teacher_name'] +
+                        '</a>' +
+                        '</td><td>' +
+                        pendingWithdraw['amount'] +
+                        '</td><td><a href="/admin/withdraw/' +
+                        pendingWithdraw['withdraw_request'] +
+                        '"><span class="fa fa-file text-success"></span></a></td></tr>');
+                }
+            }
+        }
+        renderTransactionTable = function () {
+            if (displayData['tran_list'].length > 0) {
+                for (let i = 0; i < displayData['tran_list'].length; i++) {
+                    let recenttransaction = displayData['tran_list'][i]
+                    $("#recenttransactionlist").append('<tr><td>' +
+                        recenttransaction['date'] +
+                        '</td><td><a href="/admin/student-info/' +
+                        recenttransaction['student_id'] +
+                        '" class="text-decoration-none">' +
+                        recenttransaction['student_name'] +
+                        '</a>' +
+                        '</td><td>' +
+                        recenttransaction['amount'] +
+                        '</td><td>' +
+                        recenttransaction['invoice'] +
+                        '</td><td>' +
+                        recenttransaction['new_balance'] +
+                        '</td></tr>');
+                }
+            }
+        }
+    </script>
+{% endblock %}

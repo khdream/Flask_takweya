@@ -1,0 +1,176 @@
+{% extends 'header.html' %}
+{% block content %}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mb-5">
+            <div class="question-header">
+                Sessions Statistic
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-lg-4 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-files-o fa-2x ml-3 text-primary"></span>
+                    <div class="card border-0">
+                    <span class="card-title my-0 mx-2 font-weight-bold text-secondary"
+                          style="font-size: 15px">Questions</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Pending</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="pendingquestions">0</span>
+                </div>
+            </div>
+            <div class="col-lg-4 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-graduation-cap fa-2x text-danger ml-3"> </span>
+                    <div class="card border-0">
+                    <span class="card-title my-0 mx-2 font-weight-bold text-secondary"
+                          style="font-size: 15px">Teacher</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Online</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="onlineteacher">0</span>
+                </div>
+            </div>
+            <div class="col-lg-4 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-calendar-check-o text-info fa-2x text-success ml-3"> </span>
+                    <div class="card border-0">
+                    <span class="card-title my-0 mx-2 font-weight-bold text-secondary"
+                          style="font-size: 15px">Sessions</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Live</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="livesessions">0</span>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                Live Sessions
+            </div>
+        </div>
+        <div class="row my-5 justify-content-center">
+            <table class="table table-responsive-lg" id="livesessiontable">
+                <thead>
+                <tr>
+                    <th><span>Id</span></th>
+                    <th><span>Student</span></th>
+                    <th><span>Teacher</span></th>
+                    <th><span>Subject</span></th>
+                    <th><span>Date</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" class="text-muted" id="livesessionshistory">
+                </tbody>
+            </table>
+        </div>
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                Pending Questions
+            </div>
+        </div>
+        <div class="row my-5 justify-content-center">
+            <table class="table table-responsive-lg" id="pendingquestiontable">
+                <thead>
+                <tr>
+                    <th><span>Date</span></th>
+                    <th><span>Student</span></th>
+                    <th><span>Subject</span></th>
+                    <th><span>Question</span></th>
+                    <th><span>Pictures</span></th>
+                    <th><span>Remove</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" class="text-muted" id="pendingquestionshistory">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        data = {{ data | tojson }}
+            console.log(data);
+        $(function () {
+            renderLiveSessionsTable();
+            renderPendingSessionsTable();
+            $("#livesessiontable").DataTable();
+            $("#pendingquestiontable").DataTable();
+            $("#livesessions").text(data['num_of_sess']);
+            $("#onlineteacher").text(data['num_of_teach']);
+            $("#pendingquestions").text(data['num_pend_qus'])
+        })
+        renderLiveSessionsTable = function () {
+            let liveSessions = data['LiveSession'];
+            if (liveSessions.length > 0) {
+                for (let i = 0; i < liveSessions.length; i++) {
+                    let liveSession = liveSessions[i]
+                    $("#livesessionshistory").append('<tr><td><a href="/session-detail/' +
+                        liveSession['session ID']+
+                        '" class="text-decoration-none">' +
+                        liveSession['session ID'] +
+                        '</a></td><td><a href="/admin/student-info/' +
+                        liveSession['student_id'] +
+                        '" class="text-decoration-none">' +
+                        liveSession['Student Name'] +
+                        '</a>' +
+                        '</td><td><a href="/admin/teacher-info/' +
+                        liveSession['teacher_id']+
+                        '" class="text-decoration-none">' +
+                        liveSession['Teacher Name'] +
+                        '</a>' +
+                        '</td><td>' +
+                        liveSession['Subject'] +
+                        '</td><td>' +
+                        liveSession['date'] +
+                        '</td></tr>')
+
+                }
+            }
+        }
+        renderPendingSessionsTable = function () {
+            let pendingQuestions = data['PendQuestion'];
+            if (pendingQuestions.length > 0) {
+                for (let i = 0; i < pendingQuestions.length; i++) {
+                    let pendingQuestion = pendingQuestions[i]
+                    console.log(pendingQuestions)
+                    $("#pendingquestionshistory").append('<tr><td>' +
+                        pendingQuestion['date'] +
+                        '</td><td><a href="/admin/student-info/' +
+                        pendingQuestion['student_id']+
+                        '" class="text-decoration-none">' +
+                        pendingQuestion['Student Name'] +
+                        '</a>' +
+                        '</td><td>' +
+                        pendingQuestion['Subject'] +
+                        '</td><td>' +
+                        pendingQuestion['Question'] +
+                        '</td><td>' +
+                        pendingQuestion['date'] +
+                        '</td>' +
+                        '<td>' +
+                        '<span class="fa fa-trash text-danger font-weight-bold btn" onclick="removeQuestion(\'' +
+                        pendingQuestion['question_id'] +
+                        '\',' +
+                        i +
+                        ')"></span>' +
+                        '</td>' +
+                        '</tr>')
+
+                }
+            }
+        }
+        removeQuestion = function (question_id, index) {
+            $.ajax({
+                url: '/admin/cancel_question/'+question_id,
+                type: 'POST',
+                dataType: 'json',
+                success:function (res) {
+                    if (res['success'] == true) {
+                        $("#pendingquestionshistory").empty();
+                        data['PendQuestion'].splice(index,1);
+                        renderPendingSessionsTable();
+                    }
+                },
+                error: function () {
+                    alertError("Failed")
+                }
+            })
+        }
+    </script>
+{% endblock %}

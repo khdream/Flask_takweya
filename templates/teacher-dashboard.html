@@ -1,0 +1,486 @@
+{% extends 'header.html' %}
+{% block content %}
+    {#    <div class="container custom-container">#}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row  mt-5 mr-3">
+            <div class="col-md-6">
+                <canvas id="canvas" style="height: 370px; max-width: 520px; margin: 0px auto;"></canvas>
+            </div>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-5">
+                <div class="row my-4">
+                    <div class="card shadowBlue mr-md-2 customCard">
+                        <div class="card-body">
+                            <h5 class="text-center text-muted mt-0" title="Number of Customers">Total
+                                Hours</h5>
+                            <span class="fa fa-clock-o text-info float-right mr-3" style="font-size: 2rem"></span>
+                            <h5 class="mt-3 mb-3 ml-3" id="totalhours"></h5>
+                        </div>
+                    </div>
+                    <div class="card shadowBlue mr-md-2 customCard">
+                        <div class="card-body">
+                            <h5 class="text-muted text-center mt-0" title="Number of Customers">
+                                Total Sessions
+                            </h5>
+                            <span class="fa fa-shopping-bag text-warning float-right mr-3"
+                                  style="font-size: 1.6rem"></span>
+                            <h5 class="mt-3 mb-3 ml-3" id="totalsessions"></h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-4">
+                    <div class="card shadowBlue mr-md-2 customCard">
+                        <div class="card-body">
+                            <h5 class="text-muted text-center mt-0" title="Number of Customers">
+                                Average Session Length
+                            </h5>
+                            <span class="fa fa-gamepad text-success float-right mr-3"
+                                  style="font-size: 1.8rem"></span>
+                            <h5 class="mt-3 mb-3 ml-3" id="averagesession"></h5>
+                        </div> <!-- end card-body-->
+                    </div>
+                    <div class="card shadowBlue mr-md-2 customCard">
+                        <div class="card-body">
+
+                            <h5 class="text-muted text-center mt-0" title="Number of Customers">
+                                Total Earned
+                            </h5>
+                            <span class="fa fa-dollar text-danger float-right mr-3"
+                                  style="font-size: 2rem"></span>
+                            <h5 class="mt-3 mb-3 ml-3" id="totalearned"></h5>
+                        </div> <!-- end card-body-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6 custom-control custom-switch text-center"
+                 style="box-shadow: 0px 0px 10px #727272;border-radius: 20px;">
+                <input type="checkbox" class="custom-control-input" id="onOffLine">
+                <label class="custom-control-label" for="onOffLine">Offline/Online</label>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6 d-flex justify-content-center align-items-center shadowBlue disp"
+                 style="height: 25rem; font-size: 2rem;" id="waitingWindow">
+                <span id="waitingContent">Waiting for question...</span>
+            </div>
+            <div class="col-md-6 d-flex justify-content-center align-items-center shadowBlue disp"
+                 style="height: 25rem;font-size: 2rem;" id="offlineWindow">
+                <span>You are offline currently...</span>
+            </div>
+            <div class="border border-primary mb-3 text-center my-auto" id="cardWindow">
+                <div class="card-group" id="card-group">
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5 d-flex justify-content-center">
+            <table class="table table-responsive-lg" id="sessiontable">
+                <thead>
+                <tr>
+                    <th><span>Date</span></th>
+                    <th><span>Duration</span></th>
+                    <th><span>Subject</span></th>
+                    <th><span>Text</span></th>
+                    <th><span>Money Received</span></th>
+                    <th><span>Details</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" id="sessionlist">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        var status = 0;  // 0:waiting question   1: counting  2: student accepted  3: doing class
+        var isonline = false;
+        var counting_question = ''
+        var questions = [];
+        var timer_handle = 0
+        var user_id = "{{ user['user_id'] }}";
+        var user_info = {{user |tojson}};
+        var mysubjects =
+        {{user['subjects']|tojson}}
+        var remain_time = 0
+        var socket = io();
+        socket.on('connect', function () {
+            socket.emit('teacher_connect', {user_id: user_id});
+        });
+
+        socket.on('sendquestion', function (data) {
+            sub = data['subject'];
+            if (mysubjects.indexOf(sub) > -1) {
+                if (status == 0 && isonline == true) {
+                    loadData();
+                }
+            }
+        })
+
+        function emit_teacher_accept(question_id) {
+            data = {question_id: question_id, user_id: user_id}
+            socket.emit('teacher_accept', data);
+        }
+
+        function emit_cancel() {
+            data = {question_id: counting_question, user_id: user_id}
+            socket.emit('cancel_proposal', data);
+        }
+
+        socket.on('cancel_question', function (data) {
+            if (counting_question == data['question_id'] && status == 1) {
+                loadData();
+            } else {
+                $("#" + data['question_id']).remove();
+                question_count = $("#card-group").children().length;
+                if (question_count == 0) {
+                    loadData();
+                }
+            }
+        });
+        socket.on('timeover', function (data) {
+            if (data['teacher_id'] != user_id) {
+                return;
+            }
+            $.ajax({
+                url: '/teacher/timeover',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(data)},
+                success: function (res) { // display success response
+                    if (res['success'] == true) {
+                        loadData();
+                    }
+                }
+            });
+        })
+
+        function count_time(t) {
+            if (timer_handle) {
+                clearInterval(timer_handle);
+            }
+            remain_time = t;
+            timer_handle = setInterval(function () {
+                if (remain_time > 0) {
+                    rmin = parseInt(remain_time / 60)
+                    rsec = remain_time % 60
+                    $("#rm").html("Remain Time: " + rmin + " min  " + rsec + " sec");
+                    remain_time -= 1;
+                } else {
+                    clearInterval(timer_handle);
+                }
+            }, 1000)
+        }
+
+        socket.on('keep_counting', function (data) {
+            if (status < 2 && data['teacher_id'] == user_id) {
+                count_time(data['remain_time'])
+            }
+        })
+        socket.on('student_accept', function (data) {
+            t_id = data['teacher_id'];
+            q_id = data['question_id'];
+            st = data['status'];
+            if (t_id != user_id) {
+                if (st == 'accept' && data['success'] == true) {
+                    if (status == 1 && counting_question == data['question_id']) {
+                        $("#waitingContent").html('This student accepted to other teacher.');
+                        if (timer_handle) {
+                            clearInterval(timer_handle);
+                        }
+                        setTimeout(function () {
+                            loadData();
+                        }, 2000)
+                    } else {
+                        $("#" + q_id).remove();
+                    }
+                }
+            } else {
+                if (timer_handle) {
+                    clearInterval(timer_handle);
+                }
+                if (st == 'accept' && data['success'] == false) {
+                    $("#waitingContent").html('Creating class failed.<br><div class="classerror-msg">' + data['msg'] + '</div> <button class="btn btn-primary confirm-btn" onclick="confirm()">Confirm</button>');
+                } else {
+                    loadData();
+                }
+            }
+        })
+
+        function confirm() {
+            status = 0;
+            loadData();
+        }
+
+        window.onload = function () {
+            renderChart();
+
+            renderTable();
+            $("#sessiontable").DataTable();
+
+            $("#totalhours").text(user_info['total_hours']);
+            $("#totalsessions").text(user_info['total_sessions']);
+            $("#averagesession").text(user_info['avg_sessions']);
+            $("#totalearned").text(user_info['total_earned']);
+
+            temp = user_info['is_online'];
+            if (temp == true) {
+                $(".custom-control-label").trigger('click');
+                isonline = true;
+            }
+            loadData();
+        };
+        renderChart = function () {
+            var timeFormat = 'DD/MM/YYYY';
+            var config = {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: "Earned",
+                            data: [],
+                            fill: false,
+                            borderColor: 'black'
+                        },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: "Balance"
+                    },
+                    scales: {
+                        xAxes: [{
+                            type: "time",
+                            time: {
+                                format: timeFormat,
+                                tooltipFormat: 'll'
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Date'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Earned value'
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                            },
+                        }]
+                    }
+                }
+            };
+            for (let i = 0; i < user_info['sessions'].length; i++) {
+                date = user_info['sessions'][i]['date'];
+                pricepaid = user_info['sessions'][i]['Price Paid'];
+                config['data']['datasets'][0]['data'].push({x: date, y: pricepaid});
+            }
+            var ctx = document.getElementById("canvas").getContext("2d");
+            console.log(config['options']['scales'])
+            console.log(config)
+            window.myLine = new Chart(ctx, config);
+
+        }
+        render = function (u) {
+            if (isonline == false) {
+                $("#offlineWindow").removeClass("disp");
+                $("#waitingWindow").addClass("disp");
+                $("#cardWindow").addClass("disp");
+            } else {
+                $("#offlineWindow").addClass("disp");
+                if (status == 0) {   // 0:waiting question   1: counting  2: student accepted  3: doing class
+                    if (questions.length === 0) {
+                        $("#waitingWindow").removeClass("disp");
+                        $("#waitingContent").html('Waiting questions ...');
+                        $("#cardWindow").addClass("disp");
+                    } else {
+                        $("#waitingWindow").addClass("disp");
+                        $("#cardWindow").removeClass("disp");
+                        createCardFunction()
+                    }
+                } else if (status == 1) {
+                    $("#waitingWindow").removeClass("disp");
+                    $("#waitingContent").html('Waiting for student to accept ... <div id="rm"></div><div class="mt-4">' +
+                        '<button class="btn btn-primary" onclick="cancel_proposal()">Cancel Proposal</button></div>');
+                } else if (status == 2) {
+                    $("#waitingWindow").removeClass("disp");
+                    if (u != '')
+                        $("#waitingContent").html('<a class="btn btn-primary" target="_self" href="' + u + '">Go to class!</a>');
+                    else {
+                        $("#waitingContent").html('Creating class failed.');
+                    }
+                } else if (status === 3) {
+                    $("#waitingWindow").removeClass("disp");
+                    $("#waitingContent").html('You are doing class now');
+                }
+            }
+        };
+        $("#onOffLine").click(function () {
+            isonline = !isonline;
+            param = {'online_state': isonline};
+            $.ajax({
+                url: '/teacher/status',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(param)},
+                success: function (res) { // display success response
+                    if (res['success'] == true) {
+                        loadData();
+                    } else {
+                    }
+                }
+            });
+
+        });
+        loadData = function () {
+            param = {'user_id': user_id};
+            $.ajax({
+                url: '/teacher/receive-question',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(param)},
+                success: function (res) { // display success response
+                    status = res['status'];
+                    questions = res['make_question'];
+                    if (status == 2) {
+                        render(res['presenter_url'])
+                    } else {
+                        if (status == 1) {
+                            counting_question = res['question_id']
+                        }
+                        render('');
+                    }
+
+
+                }
+            });
+        };
+        createCardFunction = function () {
+            $("#card-group").empty();
+            for (let i = 0; i < questions.length; i++) {
+                var studentName = questions[i]['student'];
+                var questionTitle = questions[i]['question'];
+                var questionId = questions[i]['question_id'];
+                var images = questions[i]['images'];
+
+                cart = '<div id="' + questionId + '" class="card mx-auto my-3 shadowBlue" style="min-width: 15rem; max-width: 15rem">' +
+                    '<div class="card-footer">' +
+                    '<h5 class="text-muted">' + questionTitle + '</h5>' +
+                    '</div>' +
+                    '<div class="card-body">' +
+                    '<h5 class="card-title">Question Pictures</h5>' +
+                    '<div class="d-inline">';
+                if (images.length !== 0) {
+                    for (j = 0; j < images.length; j++) {
+                        image = '<img class="tomodal-img" src="/static/uploads/' +
+                            images[j] +
+                            '"' + 'alt="question image" width="80" height="80">';
+                        cart = cart + image;
+                    }
+                }
+                cart = cart + '</div>' +
+                    '</div>' +
+                    '<hr>' +
+                    '<div>' +
+                    '<h5 class="text-info card-title">' + studentName + '</h5>' +
+                    '</div>' +
+                    '<div class="card-footer d-inline py-1 px-0">' +
+                    '<button type="button" class="btn btn-primary mx-3" onclick="acceptButtonClick(\'' + questionId + '\')">Accept</button>' +
+                    '<button type="button" class="btn btn-danger mx-3" onclick="declineButtonClick(\'' + questionId + '\')">Decline</button>' +
+                    '</div>' +
+                    '</div>';
+                $("#card-group").append(
+                    cart
+                );
+            }
+            setModalEvent();
+        };
+        acceptButtonClick = function (id) {
+            sendReuirements('accept', id);
+        };
+        declineButtonClick = function (id) {
+            sendReuirements('decline', id);
+        };
+        sendReuirements = function (sendState, questionID) {
+            param = {'question_id': questionID, 'status': sendState};
+            $.ajax({
+                url: '/teacher/accept',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(param)},
+                success: function (res) { // display success response
+                    if (res['success'] == true) {
+                        if (sendState == 'accept') {
+                            status = 1;
+                            counting_question = questionID
+                            $("#cardWindow").addClass("disp");
+                            $("#waitingContent").html('Waiting for student to accept ... <div id="rm"></div><div class="mt-4">' +
+                                '<button class="btn btn-primary" onclick="cancel_proposal()">Cancel Proposal</button></div>');
+                            $("#waitingWindow").removeClass("disp");
+                            emit_teacher_accept(questionID);
+                            count_time(5 * 60);
+                        } else {
+                            loadData();
+                        }
+                    }
+                }
+            });
+        }
+
+        function cancel_proposal() {
+            data = {teacher_id: user_id, question_id: counting_question}
+            $.ajax({
+                url: '/teacher/timeover',
+                type: 'POST',
+                dataType: "json",
+                data: {'data': JSON.stringify(data)},
+                success: function (res) { // display success response
+                    if (res['success'] == true) {
+                        emit_cancel();
+                        loadData();
+                    }
+                }
+            });
+        }
+
+        renderTable = function () {
+            let user_session = user_info['sessions'];
+            if (user_session.length > 0) {
+                for (let i = 0; i < user_session.length; i++) {
+                    let length_t = user_session[i]['length'];
+                    let subject = user_session[i]['Subject'];
+                    let text = user_session[i]['Text'];
+                    let pricepaid = user_session[i]['Price Paid'];
+                    let session_id = user_session[i]['session_id'];
+                    let date = user_session[i]['date'];
+                    $("#sessionlist").append('<tr><td>' +
+                        date +
+                        '</td><td>' +
+                        length_t +
+                        '</td><td>' +
+                        subject +
+                        '</td><td>' +
+                        text +
+                        '</td><td>' +
+                        pricepaid +
+                        '</td><td>' +
+                        '<a href="/session-detail/' +
+                        session_id +
+                        '"> <i aria-hidden="true" class="v-icon notranslate fa fa-eye theme--light" style="font-size: 16px;"></i> </a>' +
+                        '</td></tr>')
+                }
+            }
+        }
+    </script>
+    <style>
+        .customCard {
+            width: 15rem !important;
+            height: 6rem !important;
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}

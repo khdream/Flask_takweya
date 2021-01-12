@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html  >
+<head>
+  
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='assets/images/logo.svg') }}" type="image/x-icon">
+  <meta name="description" content="Sign Up here to teach students online">
+  
+  
+  <title>Teacher Sign Up</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap-grid.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap-reboot.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/tether/tether.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/datepicker/jquery.datetimepicker.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/dropdown/css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/formstyler/jquery.formstyler.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/formstyler/jquery.formstyler.theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/theme/css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/recaptcha.css') }}">
+  <link rel="preload" as="style" href="{{ url_for('static', filename='assets/mobirise/css/mbr-additional.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='assets/mobirise/css/mbr-additional.css') }}" type="text/css">
+  
+  
+  
+</head>
+<body>
+  <section class="menu cid-rTOgoVC0wg" once="menu" id="menu1-s">
+
+    
+
+  
+     <nav class="navbar navbar-expand beta-menu navbar-dropdown align-items-center navbar-fixed-top navbar-toggleable-sm bg-color transparent">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+        <div class="menu-logo">
+            <div class="navbar-brand">
+                <span class="navbar-logo">
+                    <a href="{{ url_for('home') }}">
+                         <img src="{{ url_for('static', filename='assets/images/logo.svg') }}" alt="Takweya Logo" title="" style="height: 3.8rem;">
+                    </a>
+                </span>
+
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true"><li class="nav-item">
+                    <a class="nav-link link text-black display-4" href="{{ url_for('homear') }}">
+                        عربي</a>
+                </li><li class="nav-item"><a class="nav-link link text-black display-4" href="{{ url_for('home') }}">
+                        Home&nbsp;</a></li>
+                <li class="nav-item">
+                    <a class="nav-link link text-black display-4" href="{{ url_for('aboutus') }}">
+                        About Us&nbsp;</a>
+                </li><li class="nav-item"><a class="nav-link link text-black display-4" href="{{ url_for('contactus') }}">
+                        Contact Us</a></li><li class="nav-item"><a class="nav-link link text-black display-4" href="{{ url_for('faq') }}">F.A.Q.</a></li><li class="nav-item"><a class="nav-link link text-black display-4" href="{{ url_for('teacher_dashboard') }}">
+                        Teach With Us&nbsp;</a></li></ul>
+            <div class="navbar-buttons mbr-section-btn"><a class="btn btn-sm btn-primary-outline display-4" href="{{ url_for('login') }}">Log In</a> <a class="btn btn-sm btn-primary display-4" href="{{ url_for('signup') }}">Sign Up</a></div>
+        </div>
+    </nav>
+</section>
+
+<section class="mbr-section extForm cid-rTOgoYx3jz" id="extForm2-t">
+
+    
+
+    
+   <div class="container">
+        <div class="media-container-row">
+            <div class="col-md-6 col-lg-6 block-content">
+                <div class="form-block">
+                    <div class="bg"></div>
+                    <div class="form-wrap" data-form-type="formoid">
+<!--Formbuilder Form-->
+<form action="{{ url_for('signupteacher') }}" method="POST" class="mbr-form form-with-styler" id="form_signup" enctype="multipart/form-data"data-form-title="Teacher Sign Up">
+<div class="form-row">
+<div hidden="hidden" data-form-alert="" class="alert alert-success col-12">Thanks for filling out the form!</div>
+<div hidden="hidden" data-form-alert-danger="" class="alert alert-danger col-12">
+</div>
+</div>
+<div class="dragArea form-row">
+<div class="col-md-12">
+<h4 class="mbr-fonts-style mb-4 mbr-fonts-style display-5">Ready to start Teaching?</h4>
+</div>
+<div class="col-lg-6 col-md-12 col-sm-12 form-group " data-for="First Name">
+<label for="First Name-extForm2-t" class="form-control-label mbr-fonts-style display-7">First Name</label>
+<input type="text" name="First Name" placeholder="Your Name" data-form-field="Name" required="required" class="form-control input display-7" value="" id="First Name-extForm2-t">
+</div>
+<div data-for="Last Name" class="col-lg-6 col-md-12 col-sm-12 form-group">
+<label for="Last Name-extForm2-t" class="form-control-label mbr-fonts-style display-7">Last Name</label>
+<input type="text" name="Last Name" placeholder="Last Name" data-form-field="Last Name" class="form-control display-7" required="required" value="" id="Last Name-extForm2-t">
+</div>
+<div data-for="email" class="col-md-12 form-group ">
+<label for="email-extForm2-t" class="form-control-label mbr-fonts-style display-7">Email</label>
+<input type="text" name="email" placeholder="Email" data-form-field="Email" class="form-control input display-7" required="required" value="" id="email-extForm2-t">
+</div>
+<div data-for="password" class="col-lg-12 col-md-12 col-sm-12 form-group">
+<label for="password-extForm2-t" class="form-control-label mbr-fonts-style display-7">Password</label>
+<input type="password" name="password" placeholder="Password" data-form-field="password" class="form-control display-7" required="required" value="" id="password-extForm2-t">
+</div>
+<div data-for="Phone Number" class="col-lg-6 col-md-12 col-sm-12 form-group">
+<label for="phone_number" class="form-control-label mbr-fonts-style display-7">Phone Number</label>
+<input type="text" name="Phone Number" id="phone_number" placeholder="Phone Number" data-form-field="Phone Number" required="required" class="form-control display-7" value="">
+</div>
+<div class="col-lg-6 col-md-12 col-sm-12 form-group" data-for="Date Of Birth">
+<label for="Date Of Birth-extForm2-t" class="form-control-label mbr-fonts-style display-7">Date Of Birth</label>
+<input type="date" name="Date Of Birth" data-form-field="Date Of Birth" required="required" class="form-control display-7" value="" id="Date Of Birth-extForm2-t">
+</div>
+<div class="alert py-2" id="phone_msg" style="display:none; background-color: #ff2a2a4d; border-radius: 10px;">
+    <strong>Note! </strong> Please enter valid phone with country code.<br> For example: +971 555555555
+  </div>
+<div data-for="Graduate" class="col-lg-12 col-md-12 col-sm-12 form-group" style="">
+<div class="form-control-label">
+<label for="Graduate-extForm2-t" class="mbr-fonts-style display-7">Are you a graduate with a college degree or higher?</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="radio" name="Graduate" data-form-field="Graduate" class="form-check-input display-7" value="Yes" checked="checked" id="Graduate-extForm2-t">
+<label class="form-check-label display-7">Yes</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="radio" name="Graduate" data-form-field="Graduate" class="form-check-input display-7" value="No" id="Graduate-extForm2-t">
+<label class="form-check-label display-7">No</label>
+</div>
+</div>
+<div data-for="Experience" class="col-lg-12 col-md-12 col-sm-12 form-group">
+<label for="Experience-extForm2-t" class="form-control-label mbr-fonts-style display-7">Tell us about your past teaching experience:</label>
+<textarea name="Experience" placeholder="Teaching Experience" data-form-field="Experience" required="required" class="form-control display-7" id="Experience-extForm2-t"></textarea>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12">
+<p class="mbr-fonts-style display-7">Please attach a government issued ID or Passport</p>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 form-group" data-for="ID">
+  <input type="file" id="ID" name="ID"><br>
+  <br>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12">
+<p class="mbr-fonts-style display-7">Please attach any certificate related to your experience.</p>
+</div>
+  <input type="file" id="Certificate" name="Certificate"><br><br>
+<div class="col-lg-12 col-md-12 col-sm-12">
+<p class="mbr-fonts-style display-7">You may add an another document here (optional) </p>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 form-group" data-for="Document">
+  <input type="file" id="Document" name="Document"><br><br>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 form-group" data-for="UniversityCheckBox">
+<div class="form-control-label">
+<label for="University-extForm2-t" class="mbr-fonts-style display-7">What grade levels (Cycles) do you teach?</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Cycle 1 and 2" name="University" class="form-check-input display-7" >
+<label class="form-check-label display-7">Cycle 1 and 2</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Cycle 3" name="University"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Cycle 3</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="University" name="University"  class="form-check-input display-7" >
+<label class="form-check-label display-7">University</label>
+</div>
+</div>
+<div data-for="Subjects" class="col-lg-12 col-md-12 col-sm-12 form-group">
+<div class="form-control-label">
+<label for="Subjects" class="mbr-fonts-style display-7">Please select the subjects that you teach:</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Arabic" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Arabic</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="English" name="Subjects" class="form-check-input display-7" >
+<label class="form-check-label display-7">English</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="French" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">French</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Chinese" name="Subjects" data-form-field="Chinese" class="form-check-input display-7" >
+<label class="form-check-label display-7">Chinese</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="IELTS" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">IELTS</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="TOEFL" name="Subjects" class="form-check-input display-7" >
+<label class="form-check-label display-7">TOEFL</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="GCSEs" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">GCSEs</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Islamic Studies" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Islamic Studies</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="History" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">History</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Social Studies" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Social Studies</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Computer Science" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Computer Science</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Math" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Math</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Science" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Science</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Geography" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Geography</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Physics" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Physics</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Chemistry" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Chemistry</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Biology" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Biology</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Social Studies" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Social Studies</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Algebra" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Algebra</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Calculus" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Calculus</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Linear Algebra" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Linear Algebra</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Psychology" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Psychology</label>
+</div>
+<div class="form-check form-check-inline">
+<input type="checkbox" value="Economics" name="Subjects"  class="form-check-input display-7" >
+<label class="form-check-label display-7">Economics</label>
+</div>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 form-group" data-for="I accept the terms and conditions">
+<div class="form-control-label">
+</div>
+<div class="form-check">
+<input type="checkbox" value="Yes" name="I accept the terms and conditions" data-form-field="Third" required="required" class="form-check-input display-7" id="I accept the terms and conditions-extForm2-t">
+<label class="form-check-label display-7">I accept the <a href="terms-and-conditions.html"> terms and conditions</a></label>
+</div>
+</div>
+<div class="col-md-12 input-group-btn mt-2">
+<button type="submit" id="btn_signup" class="btn btn-primary btn-form btn-bgr display-4">SIGN UP</button>
+</div>
+</div>
+</form><!--Formbuilder Form-->
+</div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6">
+                <div class="text-block">
+                    <h2 class="mb-4 mbr-fonts-style mbr-section-title display-2"><p><strong>Teach Online </strong>With US!</p></h2>
+                    <h3 class="mbr-section-subtitle mbr-fonts-style mb-4 display-5">Takweya is an online platform that pays you to help students with their questions online.<div>In order to begin, we will need to know more about you.</div></h3>
+                    
+                    
+                </div>
+                <p class="mb-4 mbr-fonts-style subtext display-7 pt-5">*We dont share your personal info with anyone.&nbsp;</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+  <script src="{{ url_for('static', filename='assets/web/assets/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/popper/popper.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/tether/tether.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/datepicker/jquery.datetimepicker.full.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/smoothscroll/smooth-scroll.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/dropdown/js/nav-dropdown.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/dropdown/js/navbar-dropdown.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/touchswipe/jquery.touch-swipe.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/formstyler/jquery.formstyler.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/formstyler/jquery.formstyler.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/theme/js/script.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/formoid.min.js') }}"></script>
+  
+  <script>
+      var bcheck = 0;
+    $(function(){
+        $("#phone_number").change(function(){
+            $("#phone_msg").fadeOut();
+        })
+        $( "#form_signup" ).submit(function( event ) {
+            if(bcheck == 0){
+                event.preventDefault();
+                param = {'Phone Number': $("#phone_number").val()}
+                $.ajax({
+                    url: '/api/phone_check',
+                    type: 'POST',
+                    dataType: "json",
+                    data: {'data': JSON.stringify(param)},
+                    success: function (res) { // display success response
+                        console.log(res);
+                        if (res['success'] == true) {
+                            bcheck = 1;
+                            $( "#form_signup" ).submit();
+                        } else {
+                            bcheck = 0;
+                            $("#phone_msg").html(res['msg']);
+                            $("#phone_msg").fadeIn();
+                        }
+                    }
+                });
+            }
+        });
+    })
+  </script>
+ <div id="scrollToTop" class="scrollToTop mbr-arrow-up"><a style="text-align: center;"><i class="mbr-arrow-up-icon mbr-arrow-up-icon-cm cm-icon cm-icon-smallarrow-up"></i></a></div>
+  </body>
+</html>

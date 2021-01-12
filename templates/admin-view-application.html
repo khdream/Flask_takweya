@@ -1,0 +1,113 @@
+{% extends 'header.html' %}
+{% block content %}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Teacher Application
+            </div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center font-weight-bold">First Name :</div>
+            <div class="p-2 flex-fill"><span class="ml-3 borderBottomEff"
+                                             id="firstname">{{ user['user_info']['First Name'] }}</span></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center font-weight-bold">Last Name :</div>
+            <div class="p-2 flex-fill"><span class="ml-3 borderBottomEff"
+                                             id="lastname">{{ user['user_info']['Last Name'] }}</span></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center font-weight-bold">Email@ :</div>
+            <div class="p-2 flex-fill"><span class="ml-3 borderBottomEff"
+                                             id="email">{{ user['user_info']['email'] }}</span>
+            </div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center font-weight-bold">Phone number :</div>
+            <div class="p-2 flex-fill"><span class="ml-3 borderBottomEff"
+                                             id="phonenumber">{{ user['user_info']['Phone Number'] }}</span></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center font-weight-bold">Date of birth :</div>
+            <div class="p-2 flex-fill"><span class="ml-3 borderBottomEff"
+                                             id="phonenumber">{{ user['user_info']['Date Of Birth'] }}</span></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center font-weight-bold">College degree? :</div>
+            <div class="p-2 flex-fill"><span class="ml-3 borderBottomEff"
+                                             id="phonenumber">{{ user['user_info']['Graduate'] }}</span></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center font-weight-bold">Experience :</div>
+            <div class="p-2 flex-fill"><span class="ml-3 borderBottomEff"
+                                             id="phonenumber">{{ user['user_info']['Experience'] }}</span></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center font-weight-bold">Government issued ID or Passport Attach:</div>
+            <div class="p-2 flex-fill">
+                {% if user['user_info']['Id Document'] != "" %}
+                <a href = "{{  url_for('show_file', file_id = user['user_info']['Id_id'])}}" class="rounded-circle btn btn-outline-success" style="border:1px;outline: none"><span
+                        class="fa fa-image fa-2x"></span></a>
+                {% endif %}
+                <span class="ml-3 borderBottomEff" id="phonenumber">{{ user['user_info']['Id Document'] }}</span>
+            </div>
+
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center font-weight-bold">Experience Attach:</div>
+            <div class="p-2 flex-fill">
+                {% if user['user_info']['Certificate Document'] != ""  %}
+                <a href = "{{  url_for('show_file', file_id = user['user_info']['cer_id'])}}" class="rounded-circle btn btn-outline-success" style="border:1px;outline: none"><span
+                        class="fa fa-image fa-2x"></span></a>
+                {% endif %}
+                <span class="ml-3 borderBottomEff"
+                      id="phonenumber">{{ user['user_info']['Certificate Document'] }}</span>
+            </div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2 justify-content-center align-self-center font-weight-bold">Another Document Attach:</div>
+            <div class="p-2 flex-fill"><span class="ml-3 borderBottomEff" id="phonenumber">
+                {% if user['user_info']['Additional Document'] != "" %}
+                <a href = "{{  url_for('show_file', file_id = user['user_info']['add_id'])}}"
+                    class="rounded-circle btn btn-outline-success" style="border:1px;outline: none"><span
+                    class="fa fa-image fa-2x"></span></a>
+                {% endif %}
+                {{ user['user_info']['Additional Document'] }}</span></div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2">Teaching Level :</div>
+            <div class="pl-5 flex-fill" id="teachinglevels">
+            </div>
+        </div>
+        <div class="row d-flex my-3">
+            <div class="p-2">Teaching Subjects :</div>
+            <div class="pl-5 flex-fill" id="teachingsubjects">
+            </div>
+        </div>
+    </div>
+    <script>
+        var displayData = {{user['user_info']|tojson}}
+            console.log(displayData)
+        $(function () {
+            var teachingLevels = displayData['Teaching Levels'];
+            var teachingSbujects = displayData['Subjects'];
+            if (teachingLevels.length > 0) {
+                for (let i = 0; i < teachingLevels.length; i++) {
+                    teachingLevel = teachingLevels[i];
+                    $("#teachinglevels").append('<li style="list-style-type: circle">' +
+                        teachingLevel +
+                        '</li>')
+                }
+            }
+            if (teachingSbujects.length > 0){
+                for (let i = 0; i < teachingSbujects.length; i++) {
+                    var teachingSubject = teachingSbujects[i];
+                    $("#teachingsubjects").append('<li style="list-style-type: circle">' +
+                        teachingSubject +
+                        '</li>')
+                }
+            }
+        })
+
+    </script>
+{% endblock %}

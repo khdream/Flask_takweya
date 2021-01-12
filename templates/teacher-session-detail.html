@@ -1,0 +1,116 @@
+{% extends 'header.html' %}
+{% block content %}
+
+    {#    <div class="container custom-container">#}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mb-2">
+            <div class="question-header">
+                Session Details
+            </div>
+        </div>
+        <div class="row shadow my-5">
+            <div class="d-flex align-items-center border-right col-md-5">
+                <span class="fa fa-calendar-check-o fa-2x text-success ml-3"> </span>
+                <span class="align-text-bottom ml-3">January 7, 2020 {date and time}</span>
+            </div>
+            <div class="d-flex align-items-center col-md-4 border-right">
+                <span class="fa fa-clock-o fa-2x text-success ml-3"> </span>
+                <span class="align-text-bottom ml-3">15 min{time}</span>
+            </div>
+            <div class="d-flex align-items-center col-md-3">
+                <span class="fa fa-money fa-2x text-success ml-3"> </span>
+                <span class="align-text-bottom ml-3">AED 17.50{earned price}</span>
+            </div>
+        </div>
+        <div class="row shadow my-5">
+            <div class="d-flex align-items-center border-right col-md-5">
+                <span class="fa fa-key fa-2x text-warning ml-3"> </span>
+                <span class="align-text-bottom ml-3">sfwe334tsegdg4tg54{session key}</span>
+            </div>
+            <div class="d-flex align-items-center col-md-4 border-right">
+                <span class="fa-2x ml-3"><h5> Linear Algebra {teacher name}</h5></span>
+            </div>
+            <div class="d-flex align-items-center col-md-3 disabled">
+                <span class="fa fa-graduation-cap fa-2x text-success ml-3"></span>
+                <span class="ml-3">{subject}</span>
+            </div>
+        </div>
+        <div class="row pl-1 mb-2 mt-5 pt-5">
+            <div class="question-header">
+                Asked Question
+            </div>
+        </div>
+        <div class="row shadow my-5 pl-4">
+            <h5>I need help with lesson number 5{asked questions}</h5>
+        </div>
+        <div class="row pl-1 mb-2 py-5">
+            <div class="question-header">
+                Pictures Attached
+            </div>
+        </div>
+        <div class="row mt-4 pl-4 d-flex flex-wrap">
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px"><img
+                    src="{{ url_for('static', filename='assets/images/logo-1-1-498x162.png') }}" alt="Takweya" title=""
+                    width="100px" height="100px"></div>
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px"><img
+                    src="{{ url_for('static', filename='assets/images/logo-1-1-498x162.png') }}" alt="Takweya" title=""
+                    width="100px" height="100px"></div>
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px"><img
+                    src="{{ url_for('static', filename='assets/images/logo-1-1-498x162.png') }}" alt="Takweya" title=""
+                    width="100px" height="100px"></div>
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px"><img
+                    src="{{ url_for('static', filename='assets/images/logo-1-1-498x162.png') }}" alt="Takweya" title=""
+                    width="100px" height="100px"></div>
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px"><img
+                    src="{{ url_for('static', filename='assets/images/logo-1-1-498x162.png') }}" alt="Takweya" title=""
+                    width="100px" height="100px"></div>
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px"><img
+                    src="{{ url_for('static', filename='assets/images/logo-1-1-498x162.png') }}" alt="Takweya" title=""
+                    width="100px" height="100px"></div>
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px"><img
+                    src="{{ url_for('static', filename='assets/images/logo-1-1-498x162.png') }}" alt="Takweya" title=""
+                    width="100px" height="100px"></div>
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px"><img
+                    src="{{ url_for('static', filename='assets/images/logo-1-1-498x162.png') }}" alt="Takweya" title=""
+                    width="100px" height="100px"></div>
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px"><img
+                    src="{{ url_for('static', filename='assets/images/logo-1-1-498x162.png') }}" alt="Takweya" title=""
+                    width="100px" height="100px"></div>
+            <div class="shadow mt-2 mr-3" style="border-color: grey; border-width: 2px"><img
+                    src="{{ url_for('static', filename='assets/images/logo-1-1-498x162.png') }}" alt="Takweya" title=""
+                    width="100px" height="100px"></div>
+        </div>
+        <div class="row pl-1 mb-2 mt-5 pt-5">
+            <div class="question-header">
+                Video
+            </div>
+        </div>
+        <div class="row pl-1 mb-2 mt-5">
+            <div class="col-3 col-s-3"></div>
+            <div class="col-6 col-s-9">
+                <video width="100%" height="auto" controls>
+                    <source src="https://www.w3schools.com/css/mov_bbb.mp4" type="video/mp4">
+                    <source src="https://www.w3schools.com/css/mov_bbb.mp4" type="video/ogg">
+                    Your browser does not support HTML5 video.
+                </video>
+            </div>
+            <div class="col-3 col-s-12"></div>
+        </div>
+        <div class="row pl-1 mb-2 mt-5">
+            <div class="question-header">
+                Download
+            </div>
+        </div>
+        <div class="row my-5">
+            <div class="d-flex justify-content-center col-md-6">
+                <button class="btn btn-success">Class video download</button>
+            </div>
+            <div class="d-flex justify-content-center col-md-6">
+                <button class="btn btn-success">Shared files download</button>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center my-5">
+            <button class="btn btn-danger font-weight-bolder" style="width: 250px">REPORT</button>
+        </div>
+    </div>
+{% endblock %}

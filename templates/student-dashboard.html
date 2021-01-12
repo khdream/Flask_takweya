@@ -1,0 +1,277 @@
+{% extends 'header.html' %}
+
+{% block content %}
+    {#    <div class="container col-10 custom-container">#}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-md-1 mb-5">
+            <div class="question-header">
+                Ask a question
+            </div>
+        </div>
+        <div class="row my-3">
+            <label for="question">Question</label>
+            <input type="text" class="form-control" id="question" placeholder="Enter a question"
+                   style="height: 50px;" />
+        </div>
+        <div class="row my-5">
+            <div class="col-md-4 px-0">
+                <select class="custom-select m-0" id="subject">
+                    <option value='None'>Choose subject</option>
+                    <option value="Arabic">Arabic</option>
+                    <option value="English">English</option>
+                    <option value="French">French</option>
+                    <option value="Chinese">Chinese</option>
+                    <option value="IELTS">IELTS</option>
+                    <option value="TOEFL">TOEFL</option>
+                    <option value="GCSEs">GCSEs</option>
+                    <option value="Islamic Studies">Islamic Studies</option>
+                    <option value="Hisotry">History</option>
+                    <option value="Social Studies">Social Studies</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Math">Math</option>
+                    <option value="Science">Science</option>
+                    <option value="Geography">Geography</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Biology">Biology</option>
+                    <option value="Algebra">Algebra</option>
+                    <option value="Linear Algebra">Linear Algebra</option>
+                    <option value="Calculus">Calculus</option>
+                    <option value="Psychology">Psychology</option>
+                    <option value="Economics">Economics</option>
+                </select>
+            </div>
+            <div class="col-md-4 ml-md-3 mt-md-0 mt-3">
+                <input type="file" class="custom-file-input" id="attachfile" required multiple="multiple"
+                       accept=".png,.jpeg,.jpg" />
+                <label class="custom-file-label" for="attachfile" id="attachfilelabel">Attach file...</label>
+            </div>
+            <div class="col-md-3 px-0 pl-md-3 mt-md-0 mt-3">
+                <button id='send_btn' class="btn btn-primary col-md-10">Send</button>
+            </div>
+        </div>
+        <div class="balance-msg">
+            You can't send question because your balance is less than 30 AED.
+        </div>
+        <div class="upload-images">
+            <!-- <div class="upload-image">
+                <img src="./static/uploads/1.png">
+                <button class="upload-closebtn"><i class="fa fa-close"></i></button>
+            </div> -->
+        </div>
+        <div class="row pl-1 my-5">
+            <div class="history-header">
+                History
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <table class="table table-ponsive-lg" id="sessiontable">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Duration</th>
+                    <th>Subject</th>
+                    <th>Question</th>
+                    <th>Price Paid</th>
+                    <th>Details</th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" id="sessionlist">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        var user_data = {{user | tojson}};
+        var user_id = "{{user['user_id']}}";
+        var socket = io();
+        socket.on('connect', function () {
+            socket.emit('my event', {data: 'From js to server'});
+        });
+
+        function emit_sendquestion(data) {
+            socket.emit('sendquestion', data);
+            setTimeout(function () {
+                window.location = "student/find-teacher/" + q;
+            }, 4000)
+        }
+
+        socket.on('sendquestion', function (data) {
+            if (user_id == data['user_id']) {
+                window.location = "student/find-teacher/" + q;
+            }
+        });
+
+        function setCloseEvent() {
+            $(".upload-closebtn").off();
+            $(".upload-closebtn").click(function (event) {
+                fname = $(event.target).closest('.upload-image').find('.tomodal-img').attr('data-name');
+                $.ajax({
+                    url: '/delete-file',
+                    type: 'POST',
+                    dataType: "json",
+                    data: {'data': fname},
+                    success: function (res) { // display success response
+                        if (res['success'] == true) {
+                            console.log("deleted already");
+                        } else {
+                            console.log("can't delete");
+                        }
+                    },
+                    error: function(){
+                        console.log("error file delte");
+                    }
+                });
+                $(this).closest(".upload-image").remove();
+            })
+        }
+        function validateFileType(fileName) {
+            var idxDot = fileName.lastIndexOf(".") + 1;
+            var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+            if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
+                return true;
+            } else {
+                alertInfo("Only jpg/jpeg and png files are allowed!");
+                return false;
+            }
+        }
+        var subject = 'None'
+        $(function () {
+
+            $("#send_btn").click(function () {
+                question = $("#question").val()
+                question = question.trim();
+                if (question == '') {
+                    // validation
+                    return;
+                }
+                subject = $("#subject").val();
+                if (subject == 'None') {
+                    // validation
+                    return;
+                }
+                images = $(".upload-image img")
+                fnames = []
+                for (let i = 0; i < images.length; i++) {
+                    f = $(images[i]).attr('data-name')
+                    fnames.push(f)
+                }
+                $("#send_btn").append('<span style="width: 20px; height: 20px" class="spinner-border text-white ml-1"  role="status">\n' +
+                        '</span>')
+                $("#send_btn").attr("disabled", "disabled");
+                param = {'question': question, 'subject': subject, 'images': fnames};
+                $.ajax({
+                    url: 'api/sendquestion',
+                    type: 'POST',
+                    dataType: "json",
+                    data: {'data': JSON.stringify(param)},
+                    success: function (res) { // display success response
+                        if (res['success'] == true) {
+                            q = res['question_id'];
+                            param['user_id'] = user_id;
+                            param['question_id'] = q;
+                            emit_sendquestion(param);
+                        } else {
+                            console.log(res['msg']);
+                            $(".balance-msg").html(res['msg']);
+                            $(".balance-msg").fadeIn();
+                            setTimeout(function () {
+                                $(".balance-msg").fadeOut();
+                            }, 4000)
+                        }
+                    }
+                });
+            })
+
+            $('#attachfile').on('change', function () {
+                console.log("attach file change event got")
+                var form_data = new FormData();
+                var ins = document.getElementById('attachfile').files.length;
+                var files = document.getElementById('attachfile').files;
+                for (var x = 0; x < ins; x++){
+                    var ret = validateFileType(files[x]['name']);
+                    if (ret==false)
+                    {
+                        return;
+                    }
+                }
+                if (ins == 0) {
+                    return;
+                }
+                current_ins = $(".upload-image").length;
+                console.log("current image count : new = " + current_ins + ":" + ins);
+                if(current_ins + ins>10){
+                    alertInfo("Sorry, you can't attach more than 10 images.")
+                    return;
+                }
+                for (var x = 0; x < ins; x++) {
+                    form_data.append("files[]", document.getElementById('attachfile').files[x]);
+                }
+                $.ajax({
+                    url: 'upload-file', // point to server-side URL
+                    dataType: 'json', // what to expect back from server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: form_data,
+                    type: 'post',
+                    success: function (res) { // display success response
+                        console.log(res)
+                        if (res['success'] == true) {
+                            filesnames = res['files'];
+                            console.log("reading successfully : " + filesnames.length);
+                            for (let i = 0; i < filesnames.length; i++) {
+                                html_str = '<div class="upload-image"> <img class="tomodal-img" data-name="' + filesnames[i]
+                                    + '" src="./static/uploads/' + filesnames[i] + '">'
+                                html_str += '<button class="upload-closebtn"><i class="fa fa-close"></i></button></div>'
+                                $(".upload-images").append(html_str)
+                                $('#attachfilelabel').text("Images have been uploaded.");
+                            }
+                            setCloseEvent();
+                            setModalEvent();
+                        }else{
+                            console.log("upload failed ");
+                            console.log(res['errors']);
+                            alertError("Reading files failed. Please try again.")
+                        }
+                    },
+                    error: function (response) {
+                        alertError("Error while reading files.")
+                    }
+                });
+            });
+
+            let user_session = user_data['sessions'];
+            if (user_session.length > 0) {
+                for (let i = 0; i < user_session.length; i++) {
+
+                    let length_t = user_session[i]['length'];
+                    let subject = user_session[i]['Subject'];
+                    let text = user_session[i]['Text'];
+                    let pricepaid = user_session[i]['Price Paid'];
+                    let session_id = user_session[i]['session_id'];
+                    let date = user_session[i]['date'];
+                    $("#sessionlist").append('<tr><td>' +
+                        date +
+                        '</td><td>' +
+                        length_t +
+                        '</td><td>' +
+                        subject +
+                        '</td><td>' +
+                        text +
+                        '</td><td>' +
+                        pricepaid +
+                        '</td><td>' +
+                        '<a href="/session-detail/' +
+                        session_id +
+                        '"> <i aria-hidden="true" class="v-icon notranslate fa fa-eye theme--light" style="font-size: 16px;"></i> </a>' +
+                        '</td></tr>')
+                }
+            }
+            $("#sessiontable").DataTable();
+        })
+
+    </script>
+
+{% endblock %}
+

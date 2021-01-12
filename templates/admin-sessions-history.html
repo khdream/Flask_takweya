@@ -1,0 +1,89 @@
+{% extends 'header.html' %}
+{% block content %}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mb-5">
+            <div class="question-header">
+                Sessions History
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-lg-5 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-link fa-2x ml-3 text-primary"></span>
+                    <div class="card border-0">
+                    <span class="card-title my-0 mx-2 font-weight-bold text-secondary"
+                          style="font-size: 15px">Sessions</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="totalsessions"></span>
+                </div>
+            </div>
+            <div class="col-lg-5 px-4">
+                <div class="d-flex align-items-center border-right shadow">
+                    <span class="fa fa-clock-o fa-2x text-danger ml-3"> </span>
+                    <div class="card border-0">
+                    <span class="card-title my-0 mx-2 font-weight-bold text-secondary"
+                          style="font-size: 15px">Hours</span>
+                        <span class="card-subtitle text-muted mx-2 mb-1" style="font-size: 13px">Total</span>
+                    </div>
+                    <span class="align-text-bottom ml-3" id="totalhours"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                All Sessions
+            </div>
+        </div>
+        <div class="row my-5 justify-content-center">
+            <table class="table table-responsive-lg" id="sessionhistorytable">
+                <thead>
+                <tr>
+                    <th><span>Date</span></th>
+                    <th><span>Session</span></th>
+                    <th><span>Subject</span></th>
+                    <th><span>Duration</span></th>
+                    <th><span>Paid</span></th>
+                    <th><span>Rating</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" class="text-muted" id="sessionlists">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        displayData = {{ session_history | tojson }}
+            console.log(displayData);
+        $(function () {
+            renderTable();
+            $("#sessionhistorytable").DataTable()
+            $("#totalsessions").text(displayData['session_cnt']);
+            $("#totalhours").text(displayData['total_hours']);
+        })
+        renderTable = function () {
+            let datas = displayData['session_list'];
+            for (let i = 0; i < datas.length; i++) {
+                let data = datas[i]
+
+                $("#sessionlists").append('<tr><td>' +
+                    data['date'] +
+                    '</td><td><a href="/session-detail/' +
+                    data['session_ID'] +
+                    '" class="text-decoration-none">' +
+                    data['session_ID'] +
+                    '</a>' +
+                    '</td><td>' +
+                    data['Subject'] +
+                    '</td><td>\n' +
+                    data['length'] +
+                    '</td><td>' +
+                    data['total_paid'] +
+                    '</td><td>' +
+                    data['rating'] +
+                    '</td></tr>')
+            }
+        }
+    </script>
+{% endblock %}

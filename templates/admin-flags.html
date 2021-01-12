@@ -1,0 +1,63 @@
+{% extends 'header.html' %}
+{% block content %}
+    <div class="container custom-container" style="max-width: calc(100% - 30px);">
+        <div class="row pl-1 mt-5">
+            <div class="question-header">
+                Flagged Sessions
+            </div>
+        </div>
+        <div class="row my-5 justify-content-center">
+            <table class="table table-responsive-lg" id="flagsessiontable">
+                <thead>
+                <tr>
+                    <th><span>Date</span></th>
+                    <th><span>User name</span></th>
+                    <th><span>Session ID</span></th>
+                    <th><span>Amount</span></th>
+                    <th><span>Rating</span></th>
+                </tr>
+                </thead>
+                <tbody style="font-weight: 500;" class="text-muted" id="flagedsessions">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        var displayData = {{ flg_list|tojson }}
+            console.log(displayData);
+        $(function () {
+            renderTable()
+            $("#flagsessiontable").DataTable()
+        })
+        renderTable = function () {
+            if (displayData.length > 0) {
+                for (let i = 0; i < displayData.length; i++) {
+                    let flagSession = displayData[i];
+                    let job = flagSession['job'];
+                    let id = flagSession['user_id']
+                    $("#flagedsessions").append('<tr><td>' +
+                        flagSession['date'] +
+                        '</td><td>' +
+                        '<a href="' +
+                        '/admin/teacher-info/' +
+                        id +
+                        '" class="text-decoration-none">' +
+                        flagSession['username'] +
+                        '</a>' +
+                        '</td><td>' +
+                        '<a href="/session-detail/' +
+                        flagSession['Session_ID'] +
+                        '" class="text-decoration-none">' +
+                        flagSession['Session_ID'] +
+                        '</a>' +
+                        '</td><td>' +
+                        flagSession['Amount'] +
+                        '</td><td>' +
+                        flagSession['Rating'] +
+                        '</td></tr>')
+                }
+            }
+        }
+
+    </script>
+{% endblock %}
